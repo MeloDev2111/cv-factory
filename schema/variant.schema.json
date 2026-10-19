@@ -43,6 +43,26 @@
           "type": "object"
         }
       }
+    },
+    "sortRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "by"
+      ],
+      "properties": {
+        "by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "order": {
+          "type": "string",
+          "enum": [
+            "asc",
+            "desc"
+          ]
+        }
+      }
     }
   },
   "properties": {
@@ -89,6 +109,14 @@
           "uniqueItems": true,
           "items": {
             "$ref": "#/definitions/identifier"
+          }
+        },
+        "sections": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/section"
           }
         }
       }
@@ -140,6 +168,29 @@
         "projects": {
           "type": "integer",
           "minimum": 1
+        }
+      }
+    },
+    "sort": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/definitions/section"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/sortRule"
+      }
+    },
+    "require": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/definitions/section"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "$ref": "#/definitions/identifier"
         }
       }
     }

@@ -3,11 +3,12 @@ node_modules/
 dist/
 output/
 
-# Personal data: only the placeholder person is versioned.
+# Personal data: only the fictional people (example, showcase) are versioned.
 # To publish another person's (public-safe) data, un-ignore that folder
 # explicitly, e.g. `!people/jane-doe/`.
 people/*
 !people/example/
+!people/showcase/
 
 # OS / editor
 .DS_Store

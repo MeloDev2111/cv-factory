@@ -1,0 +1,18 @@
+name: frontend
+description: Frontend and leadership roles - the 6 most recent certifications, modern template
+template: modern
+basics:
+  label: Senior Frontend Engineer
+i18n:
+  es:
+    basics:
+      label: Ingeniero Frontend Senior
+sections: [work, projects, skills, education, certificates, languages]
+filter:
+  tags: [frontend, leadership]
+  sections: [work, projects, skills]  # certifications: no tag filter, just the 6 most recent
+sort:
+  certificates: { by: date }
+limits:
+  work: 4
+  certificates: 6

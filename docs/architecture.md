@@ -54,22 +54,43 @@ interface Renderer {
 Typst only reads files under `--root`, so `typst-renderer` stages everything in
 a temporary directory and compiles from there:
 ```
-<stage>/resume.json         the resolved resume; templates read json("/resume.json")
-<stage>/template/main.typ   the template folder, copied as-is
+<stage>/resume.json                  the resolved resume; templates read json("/resume.json")
+<stage>/templates/<name>/main.typ    the whole templates folder, copied as-is
 ```
-It runs `typst compile --root <stage> <stage>/template/main.typ <out.pdf>`,
+It runs `typst compile --root <stage> --ignore-system-fonts
+[--font-path <template>/fonts] <stage>/templates/<name>/main.typ <out.pdf>`,
 surfaces Typst's stderr on failure and always removes the stage directory. A
 missing `typst` binary is detected up front with install instructions; the
 binary can be overridden with the `CV_FACTORY_TYPST` environment variable.
 
 ## Templates
-A template is a folder `templates/typst/<name>/` containing `main.typ` and an
-`i18n.json` with the labels per language (section titles, month names, "present").
-It consumes only the resolved `resume.json` and takes the language from
-`meta["x-cv-factory"].lang`. Adding a template requires no code change. The
-`classic` template renders `work`, `projects`, `skills`, `education`,
-`certificates` and `languages`, in the order they appear in the resolved resume;
-other sections are ignored. It uses Typst's bundled Libertinus Serif font.
+```
+templates/typst/
+  _shared/lib.typ      loads /resume.json; date, link and contact helpers
+  _shared/i18n.json    labels per language: section titles, month names, "present"
+  classic/main.typ     serif, centered header
+  modern/main.typ      sans-serif, accent color
+  modern/fonts/        Source Sans 3 (OFL) bundled with the template
+```
+A template is a folder with a `main.typ` that imports
+`/templates/_shared/lib.typ`. It consumes only the resolved `resume.json` and
+takes the language from `meta["x-cv-factory"].lang`. Adding a template requires
+no code change. Templates render `work`, `volunteer`, `projects`, `education`,
+`skills`, `certificates`, `awards`, `publications`, `languages` and `interests`,
+in the order they appear in the resolved resume; other sections are ignored.
+`_shared` is not a valid template name (names are `[a-z0-9-]+`).
+
+Rules the bundled templates follow, so PDFs stay ATS friendly:
+- Plain text in reading order; no icons, images or tables for body content.
+- No letter-spacing (`tracking`) on headings: it makes text extraction read
+  "E X P E R I E N C E", which ATS parsers do not recognize as a section.
+- Short list sections (`skills`, `certificates`, `languages`, `interests`) are
+  kept on one page; long sections flow across pages.
+
+Fonts: `classic` uses Typst's bundled Libertinus Serif. A template that needs
+other fonts ships them in `<template>/fonts/`; the renderer passes that folder as
+`--font-path` and always runs with `--ignore-system-fonts`, so the PDF does not
+depend on what is installed on the machine.
 
 ## Languages
 `compose` is language-aware; renderers are not. Content translation is resolved

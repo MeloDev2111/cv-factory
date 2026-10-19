@@ -35,6 +35,10 @@ export interface Variant {
   sections?: Section[];
   filter?: {
     tags?: Identifier[];
+    /**
+     * @minItems 1
+     */
+    sections?: [Section, ...Section[]];
   };
   limits?: {
     work?: number;
@@ -49,9 +53,22 @@ export interface Variant {
     references?: number;
     projects?: number;
   };
+  sort?: {
+    [k: string]: SortRule;
+  };
+  require?: {
+    /**
+     * @minItems 1
+     */
+    [k: string]: [Identifier, ...Identifier[]];
+  };
 }
 export interface LangOverride {
   basics?: {
     [k: string]: unknown;
   };
+}
+export interface SortRule {
+  by: string;
+  order?: "asc" | "desc";
 }

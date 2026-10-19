@@ -9,9 +9,11 @@ language, with different visual styles (templates). It supports multiple people.
 PDF is the only supported output format. Do not add HTML or other formats.
 
 ## Status
-Phase 1: the end-to-end flow (validate, compose, render to PDF) works for the
-`example` person with the `classic` template. See `docs/workflow.md` for usage.
-Run `npm test` and `npm run typecheck` before committing.
+The end-to-end flow (validate, compose, render to PDF) works, with two templates
+(`classic`, `modern`) and two fictional people: `example` (minimal) and `showcase`
+(complete; exercises every section, variant option and both languages). See
+`docs/workflow.md` for usage. Run `npm test` and `npm run typecheck` before
+committing. `showcase` must stay valid and fully translated: a test enforces it.
 
 ## Glossary
 | Concept | Meaning | Lives in |
@@ -61,11 +63,14 @@ never imports from `adapters`, `app` or `cli`. Details in `docs/architecture.md`
 ## Repository layout
 ```
 people/
-  example/            placeholder person (versioned)
+  example/            minimal fictional person (versioned)
+  showcase/           complete fictional person (versioned)
     source.json
     variants/
   <slug>/             real people (git-ignored)
-templates/typst/<template>/
+templates/typst/
+  _shared/            lib.typ + i18n.json used by every template
+  <template>/         main.typ (+ optional fonts/ with their license)
 schema/               vendored JSON Resume schema + variant schema
 src/                  see Architecture
 test/
@@ -111,10 +116,17 @@ template: classic        # optional default template
 basics: { label: Backend Engineer }   # shallow override of basics
 i18n: { es: { basics: { label: Ingeniero Backend } } }   # per-language basics override
 sections: [work, projects, skills, education, certificates]  # presence and order
-filter: { tags: [backend] }           # items tagged with ANY of these are kept
-limits: { work: 4, projects: 3 }      # max items per section
+filter:
+  tags: [backend]                     # items tagged with ANY of these are kept
+  sections: [work, projects, skills]  # optional: apply the tag filter only to these (default: all)
+require: { certificates: [featured] } # per section, strict: untagged items are dropped
+sort: { certificates: { by: date } }  # per section; order desc (default) | asc
+limits: { work: 4, projects: 3 }      # max items per section, applied last
 ```
-Items without `x-cv-factory.tags` are considered universal and always kept.
+Per section the order is `filter`, `require`, `sort`, `limits`, then translation.
+Under `filter`, items without `x-cv-factory.tags` are universal and always kept;
+under `require` they are dropped. `require` is applied on top of `filter`, so
+scope the filter with `filter.sections` when they would conflict.
 
 ## Coding conventions
 - Keep CLI commands small and composable (one file per command/concern).
@@ -125,7 +137,8 @@ Items without `x-cv-factory.tags` are considered universal and always kept.
 - Document any schema extension in `docs/data-schema.md`.
 
 ## Personal data
-`people/*` is git-ignored except `people/example/`. Never commit real personal
+`people/*` is git-ignored except the fictional `people/example/` and
+`people/showcase/`. Never commit real personal
 data or generated PDFs. A real person's folder may be its own private Git
 repository, which is where their data is versioned and tagged. To publish a
 public-safe person, un-ignore that folder explicitly in `.gitignore`.

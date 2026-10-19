@@ -1,0 +1,510 @@
+{
+  "basics": {
+    "name": "Sam Rivera",
+    "label": "Staff Software Engineer",
+    "email": "sam.rivera@example.com",
+    "phone": "+351 900 000 000",
+    "url": "https://samrivera.example.com",
+    "summary": "Staff engineer with 12+ years building data-intensive backend systems and developer platforms. Comfortable leading cross-team technical initiatives, mentoring engineers and turning ambiguous problems into reliable, well-documented services. All data in this profile is fictional.",
+    "location": { "city": "Lisbon", "countryCode": "PT" },
+    "profiles": [
+      { "network": "GitHub", "username": "samrivera", "url": "https://github.com/samrivera" },
+      { "network": "LinkedIn", "username": "in/samrivera", "url": "https://linkedin.com/in/samrivera" },
+      { "network": "Blog", "username": "samrivera.example.com/blog", "url": "https://samrivera.example.com/blog" }
+    ],
+    "x-cv-factory": {
+      "i18n": {
+        "es": {
+          "label": "Ingeniero de Software Staff",
+          "summary": "Ingeniero staff con más de 12 años construyendo sistemas backend intensivos en datos y plataformas para desarrolladores. Cómodo liderando iniciativas técnicas entre equipos, mentorizando ingenieros y convirtiendo problemas ambiguos en servicios fiables y bien documentados. Todos los datos de este perfil son ficticios."
+        }
+      }
+    }
+  },
+  "work": [
+    {
+      "name": "Tidewater Labs",
+      "position": "Staff Software Engineer",
+      "description": "Observability and developer platform company",
+      "location": "Lisbon, Portugal",
+      "url": "https://tidewater.example.com",
+      "startDate": "2022-01",
+      "summary": "Technical lead of the ingestion platform, a 9-engineer group spanning three teams.",
+      "highlights": [
+        "Redesigned the event ingestion pipeline, cutting p99 latency from 1.8s to 350ms while tripling throughput.",
+        "Introduced service-level objectives and error budgets across 14 services, reducing paging incidents by 45%.",
+        "Mentored six engineers, two of whom were promoted to senior; ran the internal technical-writing guild."
+      ],
+      "x-cv-factory": {
+        "tags": ["backend", "platform", "leadership"],
+        "i18n": {
+          "es": {
+            "position": "Ingeniero de Software Staff",
+            "description": "Empresa de observabilidad y plataformas para desarrolladores",
+            "summary": "Líder técnico de la plataforma de ingesta, un grupo de 9 ingenieros repartido en tres equipos.",
+            "highlights": [
+              "Rediseñé el pipeline de ingesta de eventos, reduciendo la latencia p99 de 1,8 s a 350 ms y triplicando el rendimiento.",
+              "Introduje objetivos de nivel de servicio y presupuestos de error en 14 servicios, reduciendo las alertas de guardia un 45%.",
+              "Mentoricé a seis ingenieros, dos de ellos promovidos a senior; dirigí el gremio interno de escritura técnica."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "Lumen Analytics",
+      "position": "Senior Software Engineer",
+      "description": "Business intelligence SaaS",
+      "location": "Porto, Portugal",
+      "url": "https://lumen.example.com",
+      "startDate": "2018-09",
+      "endDate": "2021-12",
+      "summary": "Owned the data-modeling and query services behind customer dashboards.",
+      "highlights": [
+        "Built a columnar query layer that made dashboards 8x faster for the largest customers.",
+        "Led the migration from a single PostgreSQL cluster to a sharded architecture with zero planned downtime.",
+        "Created the internal data-contract process adopted by all product teams."
+      ],
+      "x-cv-factory": {
+        "tags": ["backend", "data"],
+        "i18n": {
+          "es": {
+            "position": "Ingeniero de Software Senior",
+            "description": "SaaS de inteligencia de negocio",
+            "summary": "Responsable de los servicios de modelado de datos y consultas detrás de los paneles de clientes.",
+            "highlights": [
+              "Construí una capa de consultas columnar que hizo los paneles 8 veces más rápidos para los clientes más grandes.",
+              "Lideré la migración de un único clúster PostgreSQL a una arquitectura particionada sin tiempo de inactividad planificado.",
+              "Creé el proceso interno de contratos de datos adoptado por todos los equipos de producto."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "Brightpath Software",
+      "position": "Full-Stack Developer",
+      "description": "Product consultancy",
+      "location": "Lisbon, Portugal",
+      "startDate": "2016-06",
+      "endDate": "2018-08",
+      "summary": "Delivered web products for clients in logistics, health and education.",
+      "highlights": [
+        "Shipped 11 customer projects end to end, from discovery to production support.",
+        "Standardized the team's CI/CD templates, halving the time to set up a new project."
+      ],
+      "x-cv-factory": {
+        "tags": ["frontend", "backend"],
+        "i18n": {
+          "es": {
+            "position": "Desarrollador Full-Stack",
+            "description": "Consultora de producto",
+            "summary": "Entregué productos web para clientes de logística, salud y educación.",
+            "highlights": [
+              "Entregué 11 proyectos de clientes de principio a fin, desde el descubrimiento hasta el soporte en producción.",
+              "Estandaricé las plantillas de CI/CD del equipo, reduciendo a la mitad el tiempo de arranque de un proyecto."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "Cobalt Freight Systems",
+      "position": "Software Developer",
+      "description": "Logistics software",
+      "location": "Lisbon, Portugal",
+      "startDate": "2014-07",
+      "endDate": "2016-05",
+      "summary": "Developed route-planning and tracking services.",
+      "highlights": [
+        "Implemented a route-optimization service that reduced fleet mileage by 9%.",
+        "Replaced nightly batch jobs with an event-driven tracking pipeline."
+      ],
+      "x-cv-factory": {
+        "tags": ["backend"],
+        "i18n": {
+          "es": {
+            "position": "Desarrollador de Software",
+            "description": "Software de logística",
+            "summary": "Desarrollé servicios de planificación de rutas y seguimiento.",
+            "highlights": [
+              "Implementé un servicio de optimización de rutas que redujo el kilometraje de la flota un 9%.",
+              "Sustituí los procesos por lotes nocturnos por un pipeline de seguimiento orientado a eventos."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "Kestrel Studio",
+      "position": "Junior Web Developer",
+      "description": "Digital agency",
+      "location": "Lisbon, Portugal",
+      "startDate": "2012-09",
+      "endDate": "2014-06",
+      "summary": "Built marketing sites and interactive campaigns.",
+      "highlights": [
+        "Developed 20+ responsive marketing sites with a focus on accessibility and performance."
+      ],
+      "x-cv-factory": {
+        "tags": ["frontend"],
+        "i18n": {
+          "es": {
+            "position": "Desarrollador Web Junior",
+            "description": "Agencia digital",
+            "summary": "Construí sitios de marketing y campañas interactivas.",
+            "highlights": [
+              "Desarrollé más de 20 sitios de marketing adaptables, con foco en accesibilidad y rendimiento."
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "volunteer": [
+    {
+      "organization": "Code for Communities",
+      "position": "Technical Mentor",
+      "url": "https://codeforcommunities.example.org",
+      "startDate": "2020-02",
+      "summary": "Mentor in a non-profit program that teaches programming to career changers.",
+      "highlights": [
+        "Mentored 25+ learners; 18 landed their first developer job.",
+        "Designed the backend curriculum used in three cohorts."
+      ],
+      "x-cv-factory": {
+        "tags": ["leadership"],
+        "i18n": {
+          "es": {
+            "position": "Mentor Técnico",
+            "summary": "Mentor en un programa sin ánimo de lucro que enseña programación a personas que cambian de carrera.",
+            "highlights": [
+              "Mentoricé a más de 25 estudiantes; 18 consiguieron su primer empleo como desarrolladores.",
+              "Diseñé el currículo de backend usado en tres cohortes."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "organization": "Open Data Lisbon",
+      "position": "Contributor",
+      "startDate": "2017-03",
+      "endDate": "2019-12",
+      "summary": "Built civic-data tools with a volunteer community.",
+      "highlights": ["Maintained a public transit data API used by two city apps."],
+      "x-cv-factory": {
+        "tags": ["backend", "data"],
+        "i18n": {
+          "es": {
+            "position": "Colaborador",
+            "summary": "Construí herramientas de datos cívicos con una comunidad de voluntarios.",
+            "highlights": ["Mantuve una API pública de datos de transporte usada por dos aplicaciones de la ciudad."]
+          }
+        }
+      }
+    }
+  ],
+  "education": [
+    {
+      "institution": "Riverside Institute of Technology",
+      "url": "https://riverside.example.edu",
+      "area": "Distributed Computing",
+      "studyType": "Master of Science",
+      "startDate": "2010",
+      "endDate": "2012",
+      "score": "18/20",
+      "courses": ["Distributed Systems", "Database Internals", "Performance Engineering"],
+      "x-cv-factory": {
+        "i18n": {
+          "es": {
+            "area": "Computación Distribuida",
+            "studyType": "Máster en Ciencias",
+            "courses": ["Sistemas Distribuidos", "Internos de Bases de Datos", "Ingeniería de Rendimiento"]
+          }
+        }
+      }
+    },
+    {
+      "institution": "Lakeview University",
+      "area": "Computer Science",
+      "studyType": "Bachelor of Science",
+      "startDate": "2007",
+      "endDate": "2010",
+      "score": "16/20",
+      "x-cv-factory": {
+        "i18n": { "es": { "area": "Ciencias de la Computación", "studyType": "Grado en Ciencias" } }
+      }
+    }
+  ],
+  "skills": [
+    {
+      "name": "Languages",
+      "level": "Expert",
+      "keywords": ["TypeScript", "Go", "Python", "SQL"],
+      "x-cv-factory": { "tags": ["backend", "data", "frontend"], "i18n": { "es": { "name": "Lenguajes", "level": "Experto" } } }
+    },
+    {
+      "name": "Backend & Data",
+      "level": "Expert",
+      "keywords": ["Node.js", "PostgreSQL", "Kafka", "Redis", "gRPC"],
+      "x-cv-factory": { "tags": ["backend", "data"], "i18n": { "es": { "name": "Backend y Datos", "level": "Experto" } } }
+    },
+    {
+      "name": "Platform & Cloud",
+      "level": "Advanced",
+      "keywords": ["Kubernetes", "Terraform", "AWS", "Observability"],
+      "x-cv-factory": { "tags": ["platform", "backend"], "i18n": { "es": { "name": "Plataforma y Nube", "level": "Avanzado" } } }
+    },
+    {
+      "name": "Frontend",
+      "level": "Advanced",
+      "keywords": ["React", "Accessibility", "Web Performance", "Design Systems"],
+      "x-cv-factory": { "tags": ["frontend"], "i18n": { "es": { "name": "Frontend", "level": "Avanzado" } } }
+    },
+    {
+      "name": "Leadership",
+      "keywords": ["Technical strategy", "Mentoring", "Technical writing"],
+      "x-cv-factory": {
+        "tags": ["leadership"],
+        "i18n": { "es": { "name": "Liderazgo", "keywords": ["Estrategia técnica", "Mentoría", "Escritura técnica"] } }
+      }
+    }
+  ],
+  "projects": [
+    {
+      "name": "Pipeline Observatory",
+      "description": "Open-source tool that traces data lineage across batch and streaming pipelines.",
+      "highlights": [
+        "2.4k GitHub stars; used in production by 30+ companies.",
+        "Plugin system with 12 community-contributed connectors."
+      ],
+      "keywords": ["Go", "Kafka", "OpenTelemetry"],
+      "startDate": "2021-03",
+      "url": "https://github.com/samrivera/pipeline-observatory",
+      "roles": ["Creator", "Maintainer"],
+      "entity": "Open source",
+      "type": "application",
+      "x-cv-factory": {
+        "tags": ["backend", "platform", "data"],
+        "i18n": {
+          "es": {
+            "description": "Herramienta de código abierto que traza el linaje de datos en pipelines por lotes y de streaming.",
+            "highlights": [
+              "2,4 mil estrellas en GitHub; usada en producción por más de 30 empresas.",
+              "Sistema de plugins con 12 conectores aportados por la comunidad."
+            ],
+            "roles": ["Creador", "Mantenedor"],
+            "entity": "Código abierto"
+          }
+        }
+      }
+    },
+    {
+      "name": "Schema Sentinel",
+      "description": "Data-contract linter that blocks breaking schema changes in CI.",
+      "highlights": ["Adopted by 40 repositories at Tidewater Labs within six months."],
+      "keywords": ["TypeScript", "JSON Schema", "GitHub Actions"],
+      "startDate": "2023-05",
+      "url": "https://github.com/samrivera/schema-sentinel",
+      "roles": ["Author"],
+      "x-cv-factory": {
+        "tags": ["backend", "data"],
+        "i18n": {
+          "es": {
+            "description": "Linter de contratos de datos que bloquea en CI los cambios de esquema incompatibles.",
+            "highlights": ["Adoptado por 40 repositorios en Tidewater Labs en seis meses."],
+            "roles": ["Autor"]
+          }
+        }
+      }
+    },
+    {
+      "name": "Fluent Forms",
+      "description": "Accessible, headless form library for React.",
+      "highlights": ["Zero-dependency core of 4 KB; full keyboard and screen-reader support."],
+      "keywords": ["React", "TypeScript", "Accessibility"],
+      "startDate": "2019-04",
+      "endDate": "2022-06",
+      "url": "https://github.com/samrivera/fluent-forms",
+      "roles": ["Creator"],
+      "entity": "Open source",
+      "x-cv-factory": {
+        "tags": ["frontend"],
+        "i18n": {
+          "es": {
+            "description": "Biblioteca de formularios accesible y sin interfaz para React.",
+            "highlights": ["Núcleo sin dependencias de 4 KB; soporte completo de teclado y lectores de pantalla."],
+            "roles": ["Creador"],
+            "entity": "Código abierto"
+          }
+        }
+      }
+    },
+    {
+      "name": "cv-factory",
+      "description": "CLI that renders tailored, ATS-friendly CVs from a single structured source of truth.",
+      "highlights": ["Variants, bilingual content and swappable templates from one JSON file."],
+      "keywords": ["TypeScript", "Typst", "JSON Schema"],
+      "startDate": "2026-10",
+      "url": "https://example.com/cv-factory",
+      "x-cv-factory": {
+        "tags": ["backend", "platform"],
+        "i18n": {
+          "es": {
+            "description": "CLI que genera CVs a medida y aptos para ATS desde una única fuente de verdad estructurada.",
+            "highlights": ["Variantes, contenido bilingüe y plantillas intercambiables desde un único archivo JSON."]
+          }
+        }
+      }
+    }
+  ],
+  "certificates": [
+    {
+      "name": "Advanced TypeScript",
+      "issuer": "Frontend Craft Academy",
+      "date": "2023-01",
+      "x-cv-factory": { "tags": ["frontend"] }
+    },
+    {
+      "name": "Cloud Architecture Professional",
+      "issuer": "Example Cloud Institute",
+      "date": "2025-03",
+      "url": "https://certs.example.com/cloud-architecture",
+      "x-cv-factory": { "tags": ["featured", "cloud"] }
+    },
+    {
+      "name": "Agile Leadership",
+      "issuer": "Leadership Lab",
+      "date": "2022-03",
+      "x-cv-factory": { "tags": ["leadership"] }
+    },
+    {
+      "name": "Distributed Systems Fundamentals",
+      "issuer": "Systems School",
+      "date": "2022-08",
+      "x-cv-factory": { "tags": ["featured", "backend"] }
+    },
+    {
+      "name": "Linux Administration",
+      "issuer": "Open Systems Academy",
+      "date": "2018-04"
+    },
+    {
+      "name": "Kubernetes Operations Specialist",
+      "issuer": "Open Orchestration Foundation",
+      "date": "2024-09",
+      "url": "https://certs.example.com/kubernetes-operations",
+      "x-cv-factory": { "tags": ["featured", "platform"] }
+    },
+    {
+      "name": "PostgreSQL Performance",
+      "issuer": "Database Workshop",
+      "date": "2021-11",
+      "x-cv-factory": { "tags": ["backend"] }
+    },
+    {
+      "name": "Secure Software Engineering",
+      "issuer": "Secure Code Alliance",
+      "date": "2024-02",
+      "x-cv-factory": { "tags": ["featured", "security"] }
+    },
+    {
+      "name": "Web Accessibility Specialist",
+      "issuer": "Inclusive Web Organization",
+      "date": "2021-05",
+      "x-cv-factory": { "tags": ["frontend"] }
+    },
+    {
+      "name": "Data Engineering Professional",
+      "issuer": "Data Guild",
+      "date": "2023-10",
+      "x-cv-factory": { "tags": ["featured", "data"] }
+    },
+    {
+      "name": "Scrum Practitioner",
+      "issuer": "Agile Forum",
+      "date": "2019-09"
+    },
+    {
+      "name": "Site Reliability Practitioner",
+      "issuer": "Reliability Institute",
+      "date": "2023-06",
+      "x-cv-factory": { "tags": ["featured", "platform"] }
+    }
+  ],
+  "awards": [
+    {
+      "title": "Engineering Excellence Award",
+      "date": "2024-12",
+      "awarder": "Tidewater Labs",
+      "summary": "Recognized for the ingestion platform redesign.",
+      "x-cv-factory": {
+        "i18n": {
+          "es": { "title": "Premio a la Excelencia en Ingeniería", "summary": "Reconocimiento por el rediseño de la plataforma de ingesta." }
+        }
+      }
+    },
+    {
+      "title": "Best Open-Source Tool",
+      "date": "2022-10",
+      "awarder": "Data Infrastructure Conference",
+      "summary": "Community vote for Pipeline Observatory.",
+      "x-cv-factory": {
+        "i18n": {
+          "es": { "title": "Mejor Herramienta de Código Abierto", "summary": "Voto de la comunidad para Pipeline Observatory." }
+        }
+      }
+    }
+  ],
+  "publications": [
+    {
+      "name": "Error Budgets in Practice",
+      "publisher": "Reliability Engineering Journal",
+      "releaseDate": "2024-04",
+      "url": "https://journal.example.org/error-budgets",
+      "summary": "A field study of adopting service-level objectives across 14 services.",
+      "x-cv-factory": {
+        "i18n": { "es": { "summary": "Estudio de campo sobre la adopción de objetivos de nivel de servicio en 14 servicios." } }
+      }
+    },
+    {
+      "name": "Data Contracts Without the Ceremony",
+      "publisher": "Samrivera.example.com/blog",
+      "releaseDate": "2023-08",
+      "url": "https://samrivera.example.com/blog/data-contracts",
+      "summary": "A lightweight approach to schema governance for product teams.",
+      "x-cv-factory": {
+        "i18n": { "es": { "summary": "Un enfoque ligero de gobierno de esquemas para equipos de producto." } }
+      }
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "fluency": "Full professional proficiency",
+      "x-cv-factory": { "i18n": { "es": { "language": "Inglés", "fluency": "Competencia profesional plena" } } }
+    },
+    {
+      "language": "Portuguese",
+      "fluency": "Native",
+      "x-cv-factory": { "i18n": { "es": { "language": "Portugués", "fluency": "Nativo" } } }
+    },
+    {
+      "language": "Spanish",
+      "fluency": "Professional working proficiency",
+      "x-cv-factory": { "i18n": { "es": { "language": "Español", "fluency": "Competencia profesional" } } }
+    }
+  ],
+  "interests": [
+    {
+      "name": "Technical writing",
+      "keywords": ["Blogging", "Documentation"],
+      "x-cv-factory": { "i18n": { "es": { "name": "Escritura técnica" } } }
+    },
+    {
+      "name": "Trail running",
+      "x-cv-factory": { "i18n": { "es": { "name": "Carreras de montaña" } } }
+    }
+  ]
+}

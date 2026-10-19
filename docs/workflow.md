@@ -44,7 +44,9 @@ not committed. Slugs are lowercase letters, digits and hyphens.
    filter: { tags: [backend] }
    limits: { work: 4, projects: 3 }
    ```
-2. Do not copy resume content into it; use `filter` and `limits`.
+2. Do not copy resume content into it; use `filter`, `require`, `sort` and
+   `limits`. To show only your 6 featured or 6 most recent certifications, see
+   the README scenario "Keep every certification in the source, show only some".
 3. Check: `cv-factory list-variants --person <slug>` and
    `cv-factory compose backend --person <slug>` to inspect the resolved JSON.
 
@@ -60,7 +62,8 @@ Untranslated fields in the chosen language are reported as warnings and rendered
 in English.
 
 ## 5. Version with Git
-The tool, templates, schemas and `people/example/` live in this repository:
+The tool, templates, schemas and the fictional `people/example/` and
+`people/showcase/` live in this repository:
 ```
 git tag -a v0.1.0 -m "First working end-to-end flow"
 git push --tags
@@ -76,6 +79,9 @@ git tag -a sent-2026-10-acme -m "Sent to Acme (backend, es)"
 That tag records the exact data that produced the PDF you sent.
 
 ## 6. Add a template (optional)
-Create `templates/typst/<name>/` with `main.typ` and `i18n.json` (labels for
-`en` and `es`). It receives only the resolved `resume.json`. Use it with
-`--template <name>`.
+Copy `templates/typst/classic/` to `templates/typst/<name>/` and edit its
+`main.typ`. It imports `/templates/_shared/lib.typ` (data loading, date and
+contact helpers) and `_shared/i18n.json` holds the labels for `en` and `es`; it
+only receives the resolved `resume.json`. If it needs fonts, put them in
+`templates/typst/<name>/fonts/` together with their license. Use it with
+`--template <name>`, or set `template: <name>` in a variant.

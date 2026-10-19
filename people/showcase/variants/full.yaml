@@ -1,0 +1,14 @@
+name: full
+description: Everything, certifications most recent first
+sections:
+  - work
+  - projects
+  - skills
+  - education
+  - certificates
+  - awards
+  - publications
+  - volunteer
+  - languages
+sort:
+  certificates: { by: date }   # most recent first

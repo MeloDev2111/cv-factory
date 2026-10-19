@@ -47,6 +47,84 @@ describe("compose", () => {
     expect((resume.work ?? []).map((w) => w.name)).toEqual(["A", "B"]);
   });
 
+  describe("curating a section (require, sort, limits)", () => {
+    const certs = [
+      { name: "old", date: "2019-01", "x-cv-factory": { tags: ["featured"] } },
+      { name: "newest", date: "2024-06", "x-cv-factory": { tags: ["featured"] } },
+      { name: "untagged", date: "2025-01" },
+      { name: "mid", date: "2022", "x-cv-factory": { tags: ["featured", "cloud"] } },
+      { name: "undated", "x-cv-factory": { tags: ["featured"] } },
+      { name: "other", date: "2023-03", "x-cv-factory": { tags: ["cloud"] } },
+    ];
+    const src = { basics: { name: "J" }, certificates: certs } as unknown as Source;
+    const names = (v: Partial<Variant>) =>
+      (compose(src, variant({ sections: ["certificates"], ...v }), "en").resume.certificates ?? []).map(
+        (c) => c.name,
+      );
+
+    it("sorts most recent first by default, undated last", () => {
+      expect(names({ sort: { certificates: { by: "date" } } })).toEqual([
+        "untagged", "newest", "other", "mid", "old", "undated",
+      ]);
+    });
+
+    it("sorts ascending on request", () => {
+      expect(names({ sort: { certificates: { by: "date", order: "asc" } } }).slice(0, 2)).toEqual([
+        "old", "mid",
+      ]);
+    });
+
+    it("require is strict: untagged items are dropped, unlike filter", () => {
+      expect(names({ filter: { tags: ["featured"] } })).toContain("untagged");
+      expect(names({ require: { certificates: ["featured"] } })).not.toContain("untagged");
+    });
+
+    it("filter.sections scopes the global tag filter to the listed sections", () => {
+      const both = { ...src, work: [{ name: "w", "x-cv-factory": { tags: ["other"] } }] } as unknown as Source;
+      const run = (sections?: ("work" | "certificates")[]) =>
+        compose(
+          both,
+          variant({
+            sections: ["work", "certificates"],
+            filter: { tags: ["backend"], ...(sections && { sections }) } as Variant["filter"],
+          }),
+          "en",
+        ).resume;
+      // Unscoped: the tag filter hits both sections.
+      expect(run().work).toHaveLength(0);
+      expect(run().certificates).toHaveLength(1); // only the untagged one survives
+      // Scoped to work: certificates are left alone.
+      expect(run(["work"]).work).toHaveLength(0);
+      expect(run(["work"]).certificates).toHaveLength(certs.length);
+    });
+
+    it("require is applied on top of the global filter, so scope the filter when they conflict", () => {
+      const v = {
+        sections: ["certificates"] as Variant["sections"],
+        filter: { tags: ["backend"] } as Variant["filter"],
+        require: { certificates: ["featured"] } as Variant["require"],
+      };
+      expect(names(v)).toEqual([]); // featured items lack the "backend" tag
+      expect(names({ ...v, filter: { tags: ["backend"], sections: ["work"] } })).toHaveLength(4);
+    });
+
+    it("keeps the N most recent featured items", () => {
+      expect(
+        names({
+          require: { certificates: ["featured"] },
+          sort: { certificates: { by: "date" } },
+          limits: { certificates: 3 },
+        }),
+      ).toEqual(["newest", "mid", "old"]);
+    });
+
+    it("keeps the N most recent overall when only sort and limits are set", () => {
+      expect(
+        names({ sort: { certificates: { by: "date" } }, limits: { certificates: 2 } }),
+      ).toEqual(["untagged", "newest"]);
+    });
+  });
+
   it("selects and orders sections", () => {
     const { resume } = compose(source, variant({ sections: ["certificates", "work"] }), "en");
     expect(Object.keys(resume)).toEqual(["basics", "certificates", "work", "meta"]);

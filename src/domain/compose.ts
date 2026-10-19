@@ -13,11 +13,15 @@ const EXT = "x-cv-factory";
 /** Fields whose absence from `i18n.<lang>` is reported. Others need no translation. */
 const TRANSLATABLE: Readonly<Record<string, readonly string[]>> = {
   basics: ["label", "summary"],
-  work: ["position", "summary", "highlights"],
+  work: ["position", "description", "summary", "highlights"],
   volunteer: ["position", "summary", "highlights"],
-  projects: ["description", "highlights"],
-  education: ["area", "studyType"],
+  projects: ["description", "highlights", "roles", "entity"],
+  education: ["area", "studyType", "courses"],
   awards: ["title", "summary"],
+  publications: ["summary"],
+  skills: ["level"],
+  languages: ["language", "fluency"],
+  interests: ["name"],
 };
 
 export interface ComposeResult {
@@ -68,9 +72,25 @@ function matchesTags(item: JsonObject, wanted: readonly string[]): boolean {
   return tags.some((tag) => wanted.includes(tag));
 }
 
+/** Items missing the field go last, whatever the order. Dates are ISO strings, so text order is date order. */
+function sortItems(items: JsonObject[], by: string, order: "asc" | "desc" = "desc"): JsonObject[] {
+  const dir = order === "asc" ? 1 : -1;
+  return [...items].sort((a, b) => {
+    const x = a[by];
+    const y = b[by];
+    if (x == null && y == null) return 0;
+    if (x == null) return 1;
+    if (y == null) return -1;
+    const sx = String(x);
+    const sy = String(y);
+    return (sx < sy ? -1 : sx > sy ? 1 : 0) * dir;
+  });
+}
+
 /**
  * Pure: (source, variant, lang) -> resolved resume.
- * Order of operations: language overlay, tag filter, limits, section selection.
+ * Per section: tag filter, `require`, `sort`, `limits`, then language overlay.
+ * Sections are selected and ordered by the variant's `sections`.
  */
 export function compose(source: Source, variant: Variant, lang: Lang): ComposeResult {
   const warnings: string[] = [];
@@ -95,10 +115,18 @@ export function compose(source: Source, variant: Variant, lang: Lang): ComposeRe
       continue;
     }
     let items = value.filter(isObject);
-    if (variant.filter?.tags) {
-      const wanted = variant.filter.tags;
+    const wanted = variant.filter?.tags;
+    const scope = variant.filter?.sections;
+    if (wanted && (!scope || (scope as string[]).includes(name))) {
       items = items.filter((item) => matchesTags(item, wanted));
     }
+    const required = variant.require?.[name];
+    if (required) {
+      // Strict, unlike `filter`: an item without any of these tags is dropped.
+      items = items.filter((item) => extOf(item).tags?.some((tag) => required.includes(tag)));
+    }
+    const rule = variant.sort?.[name];
+    if (rule) items = sortItems(items, rule.by, rule.order);
     const limit = (variant.limits as Record<string, number> | undefined)?.[name];
     if (limit !== undefined) items = items.slice(0, limit);
     // Translate last so warnings only cover items that actually reach the output.

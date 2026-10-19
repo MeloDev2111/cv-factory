@@ -1,0 +1,22 @@
+name: backend
+description: Backend and platform roles - 6 featured certifications, most recent first
+lang: en
+template: classic
+basics:
+  label: Staff Backend Engineer
+i18n:
+  es:
+    basics:
+      label: Ingeniero Backend Staff
+sections: [work, projects, skills, certificates, education, publications, languages, interests]
+filter:
+  tags: [backend, platform, data]   # tagged items must match; untagged items stay
+  sections: [work, projects, skills]  # certificates are curated by `require` below
+require:
+  certificates: [featured]          # strict: only certifications tagged "featured"
+sort:
+  certificates: { by: date }
+limits:
+  work: 4
+  projects: 3
+  certificates: 6

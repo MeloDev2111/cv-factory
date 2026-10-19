@@ -48,14 +48,21 @@ current positions. Sections not listed are not rendered by the default template.
   | Section | Checked fields |
   |---|---|
   | `basics` | `label`, `summary` |
-  | `work`, `volunteer` | `position`, `summary`, `highlights` |
-  | `projects` | `description`, `highlights` |
-  | `education` | `area`, `studyType` |
+  | `work` | `position`, `description`, `summary`, `highlights` |
+  | `volunteer` | `position`, `summary`, `highlights` |
+  | `projects` | `description`, `highlights`, `roles`, `entity` |
+  | `education` | `area`, `studyType`, `courses` |
   | `awards` | `title`, `summary` |
+  | `publications` | `summary` |
+  | `skills` | `level` |
+  | `languages` | `language`, `fluency` |
+  | `interests` | `name` |
 
-  Everything else (certification names, company and institution names, URLs,
-  dates, skills) needs no translation and never warns. If a checked field reads
-  the same in both languages, repeat it in `i18n.<lang>` to silence the warning.
+  Only fields present on the item are checked. Everything else (certification
+  names, company, institution and publisher names, locations, URLs, dates, skill
+  names and keywords) is never checked, but can still be translated by adding it
+  to `i18n.<lang>`. If a checked field reads the same in both languages, repeat
+  it in `i18n.<lang>` to silence the warning.
 - `tags` are lowercase identifiers (`[a-z0-9-]+`). The shape of `x-cv-factory` is
   validated by `schema/x-cv-factory.schema.json`; only `en` and `es` are valid
   `i18n` keys.
@@ -74,11 +81,24 @@ basics: { ... }        # optional shallow override of basics (all languages)
 i18n:                  # optional; per-language basics override, wins over `basics`
   es: { basics: { label: "..." } }
 sections: [work, ...]  # optional; presence and order of sections (default: all, source order)
-filter: { tags: [...] }# optional; keep items with ANY listed tag (plus untagged)
-limits: { work: 4 }    # optional; max items per section, applied after filtering
+filter:                # optional; keep items with ANY listed tag (plus untagged items)
+  tags: [...]
+  sections: [work, ...]  # optional; apply the tag filter only to these sections (default: all)
+require:               # optional; per section, STRICT tag filter (untagged items are dropped)
+  certificates: [featured]
+sort:                  # optional; per section, order by a field
+  certificates: { by: date, order: desc }   # order: desc (default) | asc; missing field goes last
+limits: { work: 4 }    # optional; max items per section, applied after filter, require and sort
 ```
-Order of operations in `compose`: variant `sections` selection, tag filter,
-limits, language overlay (which produces the warnings), then `basics` overrides.
+Per section, `compose` applies, in this order: `filter` (if the section is in
+scope), `require`, `sort`, `limits`, then the language overlay (which produces
+the warnings, so they only cover items that reach the output); `basics`
+overrides come last. `require` is applied **on top of** `filter`: scope the
+filter with `filter.sections` when the two would conflict (see the README
+scenario "Keep every certification in the source, show only some").
+
+`sort` compares values as text, which orders ISO dates correctly (`2024-06` after
+`2024-02`). A year-only date (`2023`) sorts before any month of that year.
 Variants never contain resume content beyond the `basics` override; they only
 reference and filter the source.
 
