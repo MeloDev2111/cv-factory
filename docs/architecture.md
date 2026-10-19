@@ -45,6 +45,15 @@ Rules:
   (adapters are wired in the CLI entry point).
 - Only `typst-renderer` knows about Typst.
 
+## Hiding personal data
+`redact(resume, hide)` in `src/domain/redact.ts` is a pure function applied by the
+app layer after `compose` and before the renderer. It removes fields from
+`basics` (phone, email, address and postal code, location, website, profiles,
+image), so a shareable PDF is generated from a resume that no longer contains
+them. Templates therefore must not assume any contact field exists
+(`contact-parts()` can be empty; `place-part()` can be none). The `--public`
+preset lives next to it as `PUBLIC_PRESET`.
+
 ## Time
 The app layer never reads the clock. The current date reaches it as `Deps.today()`
 (a `YYYY-MM-DD` string), wired in the CLI entry point from the local date, so use

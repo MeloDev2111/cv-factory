@@ -89,6 +89,9 @@ output/<person>/      generated PDFs, one folder per person (git-ignored)
   inside identifiers (the date uses hyphens, so the name splits cleanly on `_`).
   Every dimension of the combination is in the name; never drop one, or renders
   overwrite each other.
+- A render with personal data hidden (`--hide`/`--public`) adds `_redacted` after
+  the template (`..._classic_redacted_2026-10-19.pdf`), so it never replaces the
+  full CV. Never drop this marker.
 - The date is the **local** date (not UTC) and is the file's version: another day
   creates a new file, the same day replaces it. `--no-date` omits it (stable
   name); the versioned `output/showcase/` samples use it so regenerating them does
@@ -114,6 +117,11 @@ is exactly one, and errors listing the options otherwise.
 - `cv-factory render <variant> [--lang en|es] [--template <name>] [--no-date]` —
   compose, then render to
   `output/<person>/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf`.
+- `compose`, `render` and `render-all` also accept `--public` (hides phone, email,
+  address, image) and `--hide <list>` (any of phone, email, address, location,
+  website, profiles, image). Redaction is the pure `domain/redact.ts`, applied after
+  `compose` and before rendering, so hidden data never reaches a template or the PDF.
+  Warns when no way to contact the person is left.
 - `cv-factory render-all [--variants a,b] [--langs en,es] [--templates x,y]
   [--no-date]` — render every variant x language x template (each filter defaults
   to "all"). Validates once up front, rejects unknown names, keeps going when one

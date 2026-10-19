@@ -42,7 +42,7 @@ the name followed by its keywords. The extensions below (`tags`, `i18n`) and the
 variant options (`filter`, `require`, `sort`, `limits`) act on the **whole group**,
 never on a single keyword. To show certain keywords only in some variants, move
 them to their own tagged group and keep the common ones in an untagged group (see
-the README scenario "Show some skills only in some variants").
+the README scenario "Skills grouped by category, and variant-specific skills").
 
 ## Extensions: `x-cv-factory`
 

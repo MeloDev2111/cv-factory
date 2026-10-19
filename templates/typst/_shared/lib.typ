@@ -39,14 +39,19 @@
 /// ISO country code -> name in the current language; unknown codes are shown as they are.
 #let country-name(code) = if code == none { none } else { t.countries.at(code, default: code) }
 
-/// Contact details as an array of content: place, email, phone, website.
+/// "Lima, Peru", or none when there is no location (it can be hidden in a shareable CV).
+#let place-part() = {
+  let loc = get(basics, "location")
+  if loc == none { return none }
+  join-some((get(loc, "city"), get(loc, "region"), country-name(get(loc, "countryCode"))))
+}
+
+/// Contact details as an array of content: place, email, phone, website. Any of them may be
+/// missing (a shareable CV hides some), so an empty array is possible.
 #let contact-parts() = {
   let parts = ()
-  let loc = get(basics, "location")
-  if loc != none {
-    let place = join-some((get(loc, "city"), get(loc, "region"), country-name(get(loc, "countryCode"))))
-    if place != none { parts.push(place) }
-  }
+  let place = place-part()
+  if place != none { parts.push(place) }
   if get(basics, "email") != none { parts.push(link("mailto:" + basics.email)[#basics.email]) }
   if get(basics, "phone") != none { parts.push(basics.phone) }
   if get(basics, "url") != none { parts.push(link(basics.url)[#basics.url]) }

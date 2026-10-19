@@ -30,6 +30,11 @@ for (const variant of variants) {
   }
 }
 
+// A shareable version (phone, email, address and photo hidden), marked `_redacted` in its name.
+process.stdout.write(
+  run("render", "backend", "--person", person, "--lang", "en", "--public", "--no-date"),
+);
+
 // One extra sample per template, so every template is shown on the same content.
 const templates = readdirSync(path.join(root, "templates", "typst"), { withFileTypes: true })
   .filter((d) => d.isDirectory() && !d.name.startsWith("_"))

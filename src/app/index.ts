@@ -2,6 +2,8 @@ import path from "node:path";
 import { compose as composeResume } from "../domain/compose.js";
 import { CvFactoryError } from "../domain/errors.js";
 import { assertIdentifier, outputFileName } from "../domain/naming.js";
+import type { Hideable } from "../domain/redact.js";
+import { redact } from "../domain/redact.js";
 import type { Lang, ResolvedResume, Source, ValidationIssue, Variant } from "../domain/types.js";
 import { BASE_LANG, LANGS } from "../domain/types.js";
 import type { PersonRepository } from "../ports/person-repository.js";
@@ -106,6 +108,8 @@ export interface ComposeInput {
   person: string;
   variant: string;
   lang?: Lang;
+  /** Personal data to leave out (a shareable version). Rendered files are marked `_redacted`. */
+  hide?: readonly Hideable[];
 }
 
 export interface ComposeOutput {
@@ -119,8 +123,14 @@ export async function composeVariant(deps: Deps, input: ComposeInput): Promise<C
   const source = await loadValidSource(deps, input.person);
   const variant = await loadValidVariant(deps, input.person, input.variant);
   const lang = input.lang ?? variant.lang ?? BASE_LANG;
-  const { resume, warnings } = composeResume(source, variant, lang);
-  return { resume, warnings, variant, lang };
+  const composed = composeResume(source, variant, lang);
+  const redacted = redact(composed.resume, input.hide ?? []);
+  return {
+    resume: redacted.resume,
+    warnings: [...composed.warnings, ...redacted.warnings],
+    variant,
+    lang,
+  };
 }
 
 export interface RenderInput extends ComposeInput {
@@ -142,13 +152,10 @@ export async function render(deps: Deps, input: RenderInput): Promise<RenderOutp
   const outPath = path.join(
     deps.outputDir,
     input.person,
-    outputFileName(
-      input.person,
-      variant.name,
-      lang,
-      template,
-      input.dated === false ? undefined : deps.today(),
-    ),
+    outputFileName(input.person, variant.name, lang, template, {
+      ...(input.dated !== false && { date: deps.today() }),
+      redacted: (input.hide ?? []).length > 0,
+    }),
   );
   await deps.renderer.render(resume, { template, outPath });
   return { outPath, warnings };
@@ -161,6 +168,7 @@ export interface RenderAllInput {
   langs?: Lang[];
   templates?: string[];
   dated?: boolean;
+  hide?: readonly Hideable[];
 }
 
 export interface RenderedFile {
@@ -218,6 +226,7 @@ export async function renderAll(deps: Deps, input: RenderAllInput): Promise<Rend
             lang,
             template,
             ...(input.dated !== undefined && { dated: input.dated }),
+            ...(input.hide !== undefined && { hide: input.hide }),
           });
           rendered.push({ variant, lang, template, ...result });
         } catch (error) {

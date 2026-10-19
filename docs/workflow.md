@@ -67,6 +67,16 @@ new file, the same day replaces that day's. Options:
 Untranslated fields in the chosen language are reported as warnings and rendered
 in English.
 
+**A shareable copy.** To publish or send a CV without personal data:
+```
+cv-factory render backend --person <slug> --public
+cv-factory render backend --person <slug> --hide phone,email
+```
+`--public` hides phone, email, address and photo; `--hide` picks fields (see the
+README, "Shareable version"). The file is named `..._redacted_<date>.pdf`. Check the
+free text (`summary`, `highlights`) yourself for employer-internal details: no flag
+can detect those.
+
 **Everything at once.** To generate every variant in every language with every
 template (for example before comparing templates or sending a batch):
 ```

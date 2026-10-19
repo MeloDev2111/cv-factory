@@ -1,189 +1,206 @@
-# CV Factory
+<div align="center">
 
-Manage your CV as structured data and render tailored, ATS-friendly **PDFs** from
-it.
+# 🏭 CV Factory
 
-- **One source of truth** per person, in [JSON Resume](https://jsonresume.org/schema) format.
-- **Variants**: different CVs for different kinds of roles, generated from the same data.
-- **Languages**: English (base) and Spanish, translated item by item.
-- **Templates**: swappable visual styles (`classic`, `modern`, `clean`).
-- **Multiple people** in one repository.
+**Your CV as structured data. Tailored, ATS-friendly PDFs on demand.**
 
-> **Status:** the end-to-end flow works (validate → compose → render to PDF).
-> Two fictional people are included: `example` (minimal starting point) and
-> `showcase` (a complete CV that exercises everything).
+![Node](https://img.shields.io/badge/node-%E2%89%A522-339933?logo=node.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
+![Typst](https://img.shields.io/badge/PDF-Typst-239DAD)
+![Output](https://img.shields.io/badge/output-PDF-red)
 
-## Concepts
+[Quick start](#-quick-start) ·
+[Gallery](#-gallery) ·
+[Usage](#-usage) ·
+[Scenarios](#-common-scenarios) ·
+[Templates](#-templates) ·
+[Privacy](#-privacy-and-your-own-data)
 
-| Concept | Meaning |
+</div>
+
+Write your career **once** in a single JSON file ([JSON Resume](https://jsonresume.org/schema)),
+then generate as many CVs as you need: one per kind of role, in English or Spanish,
+in the style you prefer, with or without your personal contact data.
+
+## ✨ Features
+
+- 🧬 **One source of truth** per person, in the standard JSON Resume format, validated against its schema.
+- 🎯 **Variants**: different CVs for different roles from the same data (filter by tag, order sections, keep only the N most recent or featured items).
+- 🌍 **Bilingual**: English (base) and Spanish, translated item by item, with warnings for what is missing.
+- 🎨 **Templates**: three ATS-friendly styles, easy to add more.
+- 🔒 **Shareable copies**: hide phone, email and address with one flag. The data is removed before the PDF exists.
+- 👥 **Multiple people** in one repository; each person's data stays out of Git.
+- ⚡ **One command for everything**: every variant × language × template.
+- 🧩 **Swappable renderer**: a lightweight hexagonal architecture keeps Typst behind a port.
+
+## 📸 Gallery
+
+Real output from the fictional `showcase` person, versioned in [`output/showcase/`](output/showcase/):
+
+| Template · variant | English | Español |
+|---|---|---|
+| **classic** · backend | [PDF](output/showcase/showcase_backend_en_classic.pdf) | [PDF](output/showcase/showcase_backend_es_classic.pdf) |
+| **modern** · frontend | [PDF](output/showcase/showcase_frontend_en_modern.pdf) | [PDF](output/showcase/showcase_frontend_es_modern.pdf) |
+| **classic** · full (everything) | [PDF](output/showcase/showcase_full_en_classic.pdf) | [PDF](output/showcase/showcase_full_es_classic.pdf) |
+| **modern** · full | [PDF](output/showcase/showcase_full_en_modern.pdf) | |
+| **clean** · full | [PDF](output/showcase/showcase_full_en_clean.pdf) | |
+| 🔒 **shareable** (`--public`) · backend | [PDF](output/showcase/showcase_backend_en_classic_redacted.pdf) | |
+
+Compare `backend` and `frontend` to see how one source produces different CVs.
+
+## 🚀 Quick start
+
+**1. Install the tools**
+
+| Tool | Install |
 |---|---|
-| Person | Owner of a CV (`people/<slug>/`) |
-| Source of truth | All of a person's information (`people/<slug>/source.json`) |
-| Variant | Which content to show for a kind of role (`people/<slug>/variants/<name>.yaml`) |
-| Language | `en` (base) or `es` |
-| Template | How the PDF looks (`templates/typst/<name>/`) |
+| Node.js ≥ 22 | <https://nodejs.org> · check with `node --version` |
+| Typst (PDF engine) | Windows: `winget install --id Typst.Typst`, then **open a new terminal** · macOS: `brew install typst` |
 
-A PDF is the combination of person, variant, language and template, and is
-written to `output/<person>/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf`,
-for example `output/showcase/showcase_backend_es_classic_2026-10-19.pdf` (one
-folder per person, all git-ignored).
+<details>
+<summary>More ways to install Typst, and how to verify it</summary>
 
-- Every dimension is in the name, so different combinations never overwrite each
-  other.
-- The date is **today's local date**, so the name doubles as a version: rendering
-  the same combination on another day creates a new file and keeps the old one
-  (useful to know exactly what you sent to an application). Rendering it again the
-  same day replaces that day's file.
-- Old files are never deleted by the tool; clean `output/<person>/` yourself when
-  you no longer need them.
-- `--no-date` leaves the date out (`showcase_backend_es_classic.pdf`) for a stable
-  name. The versioned sample PDFs use it so regenerating them does not rename files.
+cv-factory calls the official [`typst`](https://github.com/typst/typst) binary.
 
-## Prerequisites
+- Download an archive from the [GitHub Releases](https://github.com/typst/typst/releases) and put `typst` on your `PATH` (package managers can lag behind).
+- Any platform with Rust: `cargo install --locked typst-cli`.
+- Verify with `typst --version` (developed against 0.15.1). Update with `winget upgrade Typst.Typst`, or `typst update` for a release archive.
+- If `typst` is not on your `PATH` (e.g. a terminal opened before installing), set `CV_FACTORY_TYPST` to the executable.
 
-### Node.js
-Node.js LTS, version 22 or newer. Check with `node --version`.
+</details>
 
-### Typst (PDF engine)
-cv-factory calls the official `typst` command-line binary
-([typst/typst](https://github.com/typst/typst)). Install it with one of:
-
-**Windows (winget, recommended)**
-```powershell
-winget install --id Typst.Typst
-```
-Then **open a new terminal** so the updated `PATH` is picked up.
-
-**Other options**
-- Download the archive for your platform from the
-  [GitHub Releases](https://github.com/typst/typst/releases) and put `typst` in a
-  directory on your `PATH`. Package managers can lag behind this.
-- macOS: `brew install typst`
-- Any platform with Rust: `cargo install --locked typst-cli`
-
-**Verify**
-```
-typst --version
-```
-Should print a version (developed against 0.15.1). Update later with
-`winget upgrade Typst.Typst` (or `typst update` if you installed from a release
-archive).
-
-## Setup
-```
+**2. Install the project**
+```bash
 npm install
-npm test          # optional sanity check
+npm test            # optional sanity check
 ```
 
-## Sample output
-The PDFs generated from the fictional `showcase` person are versioned in
-[`output/showcase/`](output/showcase/), so you can see what the tool produces
-without installing anything: every variant in English and Spanish, plus the same
-CV (`full` variant) in each template (`..._classic.pdf`, `..._modern.pdf`,
-`..._clean.pdf`). They carry no date in their names (rendered with `--no-date`).
-After changing a template, the data of `showcase` or the render logic, regenerate
-them with:
+**3. Render your first CV**
+```bash
+npm run dev -- render backend --person showcase --lang es
+# → output/showcase/showcase_backend_es_classic_<today>.pdf
 ```
-npm run samples
-```
-Every other person's PDFs (`output/<person>/`) are git-ignored.
 
-## Usage
-`cv-factory <command>` below means `npm run dev -- <command>` (or
-`npm run build` once, then `node dist/cli/index.js <command>`).
+Then make it yours: [create your own person](#-privacy-and-your-own-data).
+
+## 🧠 How it works
+
 ```
-cv-factory list-people
-cv-factory list-variants --person showcase
-cv-factory validate --person showcase
-cv-factory compose backend --person showcase --lang es   # prints the resolved resume.json
-cv-factory render backend --person showcase --lang es    # writes output/showcase/showcase_backend_es_classic_<today>.pdf
-cv-factory render backend --person showcase --template modern   # writes output/showcase/showcase_backend_en_modern_<today>.pdf
-cv-factory render backend --person showcase --no-date    # writes output/showcase/showcase_backend_en_classic.pdf
-cv-factory render-all --person showcase                  # every variant x language x template
+ people/<you>/source.json ─┐
+ people/<you>/variants/*.yaml ─┼─►  compose  ─►  redact (optional)  ─►  render (Typst)  ─►  output/<you>/*.pdf
+ templates/typst/<name>/ ──────┘    pick, order,    hide phone,           PDF
+                                    translate       email, address…
 ```
-`--person` can be omitted only when there is exactly one person. Missing
-translations are reported as warnings on stderr and fall back to English. If
-`typst` is not on your `PATH` (for example in a terminal opened before installing
-it), set `CV_FACTORY_TYPST` to the executable. Step-by-step guides (adding a job,
-creating a variant, translating, versioning) are in
+
+| Concept | Meaning | Lives in |
+|---|---|---|
+| 👤 **Person** | Owner of a CV | `people/<slug>/` |
+| 🧬 **Source of truth** | All of a person's information, in English | `people/<slug>/source.json` |
+| 🎯 **Variant** | What to show for a kind of role | `people/<slug>/variants/<name>.yaml` |
+| 🌍 **Language** | `en` (base) or `es` | `--lang`, `x-cv-factory.i18n` |
+| 🎨 **Template** | How the PDF looks | `templates/typst/<name>/` |
+
+A PDF is the combination of all of them, written to:
+
+```
+output/<person>/<person>_<variant>_<lang>_<template>[_redacted]_<YYYY-MM-DD>.pdf
+output/showcase/showcase_backend_es_classic_2026-10-19.pdf
+```
+
+- Every dimension is in the name, so different combinations never overwrite each other.
+- The date is **today's local date**: it works as a version. Another day creates a new file; the same day replaces that day's.
+- The tool never deletes old files; clean `output/<person>/` yourself.
+- `--no-date` leaves the date out for a stable name (the versioned samples use it).
+- Versions with data hidden carry `_redacted`, so they never replace the full CV.
+
+## 📖 Usage
+
+`cv-factory <command>` below means `npm run dev -- <command>` (or run `npm run build` once, then `node dist/cli/index.js <command>`).
+
+| Command | What it does |
+|---|---|
+| `list-people` | List the people available. |
+| `list-variants` | List a person's variants. |
+| `validate` | Validate `source.json` and all variants. |
+| `compose <variant>` | Print the resolved `resume.json` (to stdout, or `-o <file>`). |
+| `render <variant>` | Compose and render one PDF. |
+| `render-all` | Render every variant × language × template. |
+
+| Option | Applies to | Meaning |
+|---|---|---|
+| `-p, --person <slug>` | all | Person to use. Optional only when there is exactly one. |
+| `-l, --lang <en\|es>` | compose, render | Language (default: the variant's, else `en`). |
+| `-t, --template <name>` | render | Template (default: the variant's, else `classic`). |
+| `--no-date` | render, render-all | Leave the date out of the file name. |
+| `--public` | compose, render, render-all | Shareable preset: hides phone, email, address and photo. |
+| `--hide <list>` | compose, render, render-all | Hide specific data: `phone`, `email`, `address`, `location`, `website`, `profiles`, `image` (details under [Common scenarios](#-common-scenarios) → *Shareable version*). |
+| `--variants`, `--langs`, `--templates <list>` | render-all | Comma-separated subsets (each defaults to all). |
+
+```bash
+cv-factory render backend --person showcase --template modern --no-date
+cv-factory render-all --person showcase --langs es
+cv-factory compose backend --person showcase --lang es     # inspect what a template receives
+```
+
+Missing translations are printed as warnings on stderr and fall back to English.
+Step-by-step guides (adding a job, creating a variant, translating, versioning) are in
 [docs/workflow.md](docs/workflow.md).
 
-## Templates
-| Template | Look |
-|---|---|
-| `classic` (default) | Serif, black on white, centered header. |
-| `modern` | Sans-serif (bundled Source Sans 3), one accent color, left-aligned header. |
-| `clean` | Sans-serif, black ink, centered `Name \| Role` header with contact in three columns, full month names, hyphen bullets. Groups several consecutive roles at the same employer under one heading. |
+## 🎯 Common scenarios
 
-All are single-column, plain text in reading order, with no icons, images or
-tables, so ATS parsers can extract them cleanly. Pick one per run with
-`--template`, or per variant with `template:` in the variant file. All render
-`work`, `volunteer`, `projects`, `education`, `skills`, `certificates`, `awards`,
-`publications`, `languages` and `interests`.
+<details>
+<summary><b>⚡ Generate every version in one command</b></summary>
 
-**Several roles at one employer.** Write one `work` entry per role, with the same
-`name` and consecutive in the file. `clean` shows the employer once with the
-overall date range and lists the roles under it; `classic` and `modern` repeat
-the employer on each role.
-
-## Common scenarios
-
-### Generate every version in one command
 `render-all` renders every **variant × language × template** of a person:
-```
-cv-factory render-all --person melio-diaz
-# 2 variants x 2 languages x 3 templates = 12 PDFs in output/melio-diaz/
-```
-Narrow it down with comma-separated lists (each defaults to "all"):
-```
+```bash
+cv-factory render-all --person your-name
+# 2 variants × 2 languages × 3 templates = 12 PDFs in output/your-name/
 cv-factory render-all --person showcase --variants backend,full --langs es --templates clean,modern
-cv-factory render-all --person showcase --no-date        # stable file names
+cv-factory render-all --person showcase --no-date          # stable file names
 ```
-Behavior to know:
-- The person's data is validated once, up front; invalid data stops the run before
-  anything is rendered.
+- Data is validated once, up front; invalid data stops the run before anything is rendered.
 - An unknown variant, language or template is rejected with the list of valid ones.
-- If one combination fails, the others still render. The summary says how many
-  succeeded and failed, identical errors (for example `typst` not installed) are
-  printed once with the combinations they affect, and the exit code is 1.
+- If one combination fails, the others still render. The summary says how many succeeded and failed, identical errors (e.g. `typst` not installed) are printed once with the combinations they affect, and the exit code is 1.
 - Translation warnings are printed per combination (`variant/lang/template`).
-- Templates are discovered from `templates/typst/` (every folder with a `main.typ`),
-  so a new template is included automatically.
+- Templates are discovered from `templates/typst/` (every folder with a `main.typ`), so a new template is included automatically.
 
-To render a single combination use `render` (see Usage).
+</details>
 
-### Skills grouped by category
-This comes from the JSON Resume specification, not from the templates. `skills` is
-a list of groups; each group has a `name` (the category), an optional `level` and
-its `keywords` (the items):
-```json
-{ "name": "Database", "keywords": ["PostgreSQL", "SQL Server", "MySQL"] }
+<details>
+<summary><b>🔒 Shareable version: hide sensitive data</b></summary>
+
+Generate a copy without personal data to post publicly or send around, leaving the full CV untouched:
+```bash
+cv-factory render backend --person your-name --public          # preset
+cv-factory render backend --person your-name --hide phone      # just the phone
+cv-factory render-all --person your-name --public --hide location
 ```
-Templates only print the name followed by its keywords. What this tool adds on top
-is that **tags, translations and limits apply to the whole group**, not to single
-keywords. Consequently a variant decides which *categories* appear.
+- **`--public`** hides `phone`, `email`, `address` and `image`. City, website and profiles stay, so there is still a way to reach you.
+- **`--hide <list>`** hides specific data: `phone`, `email`, `address` (street and postal code; city and country stay), `location` (all of it), `website`, `profiles`, `image`. It adds to `--public` if you use both.
+- The data is removed **before the PDF is generated**, so it is not in the file at all (no hidden text under a white box). If nothing is left to contact the person you get a warning.
 
-### Show some skills only in some variants
-Since tags belong to a group, split a group in two to control which keywords each
-variant shows: keep the common ones in a group without tags (shown everywhere) and
-move the rest into their own tagged group.
-```json
-{ "name": "Languages", "keywords": ["TypeScript", "SQL"] },
-{ "name": "Systems & data languages", "keywords": ["Go", "Python"],
-  "x-cv-factory": { "tags": ["backend", "data"] } }
-```
-With `filter: { tags: [frontend] }` the second group disappears; with
-`filter: { tags: [backend] }` both are shown. See `people/showcase/source.json`
-(the two "languages" groups) and compare `showcase_frontend_*` with
-`showcase_backend_*` in `output/showcase/`.
+What to treat as sensitive:
 
-### Keep every certification in the source, show only some
-Put all of them in `source.json`. Each variant decides what to show, using three
-independent options that you can combine per section:
+| Data | Share publicly? | Why |
+|---|---|---|
+| 📞 Phone | ❌ No | Spam, phone scams, WhatsApp impersonation. |
+| ✉️ Email | ⚠️ Depends | Scraped for spam and phishing. Hide it in open posts; keep it when sending directly to a recruiter. |
+| 🏠 Street address, postal code | ❌ Never | City and country are enough. |
+| 🪪 Photo, date of birth, national ID, marital status, nationality | ❌ Do not include | Useful for identity fraud, and not needed to be hired. |
+| 🌐 Website, GitHub, LinkedIn | ✅ Yes | They are your public way to be contacted. |
+| 👥 References with contact details | ❌ No | They are other people's data. |
+| 🏢 Employer-internal details (user counts, internal systems or project names) | 🔍 **Review by hand** | May be covered by a confidentiality agreement. The tool cannot detect it: it is free text in `summary` and `highlights`. |
+
+</details>
+
+<details>
+<summary><b>🏅 Keep every certification in the source, show only some</b></summary>
+
+Put all of them in `source.json`. Each variant decides what to show, with three independent options you can combine per section:
 
 | Option | What it does |
 |---|---|
-| `sort` | Orders a section by a field. Default order is descending (most recent first); items without the field go last. |
+| `sort` | Orders a section by a field. Default is descending (most recent first); items without the field go last. |
 | `require` | Strict tag filter: keeps only items carrying one of the listed tags. Untagged items are dropped. |
 | `limits` | Keeps the first N items, after filtering and sorting. |
 
@@ -195,8 +212,7 @@ limits:
   certificates: 6
 ```
 
-**The 6 featured certifications, most recent first.** Tag the ones you want to
-highlight in `source.json` (`"x-cv-factory": { "tags": ["featured"] }`), then:
+**The 6 featured certifications, most recent first.** Tag the ones you want to highlight in `source.json` (`"x-cv-factory": { "tags": ["featured"] }`), then:
 ```yaml
 require:
   certificates: [featured]
@@ -205,46 +221,106 @@ sort:
 limits:
   certificates: 6
 ```
-If fewer than 6 are tagged, you simply get fewer. Different variants can feature
-different certifications by using different tags (`featured`, `cloud`, `security`...).
+If fewer than 6 are tagged, you simply get fewer. Different variants can feature different items by using different tags.
 
-**Mixing with the global tag filter.** `filter.tags` applies to *every* section
-by default, and `require` is applied on top of it, so a variant that filters by
-`backend` would also drop featured certifications that are not tagged `backend`.
-Scope the global filter to the sections that need it:
+**Mixing with the global tag filter.** `filter.tags` applies to *every* section by default, and `require` is applied on top of it, so a variant that filters by `backend` would also drop featured certifications that are not tagged `backend`. Scope the global filter to the sections that need it:
 ```yaml
 filter:
   tags: [backend, platform]
   sections: [work, projects, skills]   # certificates are left to `require`
 ```
-See `people/showcase/variants/backend.yaml` (featured) and `frontend.yaml` (most
-recent) for working examples.
+See `people/showcase/variants/backend.yaml` (featured) and `frontend.yaml` (most recent).
 
-### Another role, same data
-Create `people/<slug>/variants/<name>.yaml`, tag your items in `source.json`, and
-filter by those tags. See [docs/workflow.md](docs/workflow.md#3-create-a-variant-for-a-kind-of-role).
+</details>
 
-### A different language for one variant
-Add `x-cv-factory.i18n.es` to the items you want translated and render with
-`--lang es`. Fields you leave out fall back to English with a warning; see
-[docs/data-schema.md](docs/data-schema.md#rules-for-i18n).
+<details>
+<summary><b>🧱 Skills grouped by category, and variant-specific skills</b></summary>
 
-## Your own data
-Real people live in `people/<slug>/` and are **git-ignored** so personal data is
-never committed; only the fictional `example` and `showcase` are versioned. Start
-from the minimal one (or from `showcase` if you want to see every option):
+Grouping comes from the JSON Resume specification, not from the templates. `skills` is a list of groups; each has a `name` (the category), an optional `level` and its `keywords` (the items):
+```json
+{ "name": "Database", "keywords": ["PostgreSQL", "SQL Server", "MySQL"] }
 ```
-cp -r people/example people/your-name
+Templates only print the name followed by its keywords. What this tool adds is that **tags, translations and limits apply to the whole group**, not to single keywords, so a variant decides which *categories* appear.
+
+To show some keywords only in some variants, split a group in two: keep the common ones in an untagged group (shown everywhere) and move the rest into their own tagged group.
+```json
+{ "name": "Languages", "keywords": ["TypeScript", "SQL"] },
+{ "name": "Systems & data languages", "keywords": ["Go", "Python"],
+  "x-cv-factory": { "tags": ["backend", "data"] } }
 ```
-Slugs use lowercase letters, digits and hyphens only.
+With `filter: { tags: [frontend] }` the second group disappears; with `filter: { tags: [backend] }` both are shown. Compare `showcase_frontend_*` with `showcase_backend_*`.
 
-## Documentation
-- [AGENTS.md](AGENTS.md) — project rules and conventions
-- [docs/architecture.md](docs/architecture.md)
-- [docs/data-schema.md](docs/data-schema.md)
-- [docs/workflow.md](docs/workflow.md)
+</details>
 
-## Licenses
-The `modern` and `clean` templates use Source Sans 3 (Adobe), bundled in
-`templates/typst/_shared/fonts/` and licensed under the SIL Open Font License 1.1;
-the license is in that folder.
+<details>
+<summary><b>🎯 Another role, same data</b></summary>
+
+Create `people/<slug>/variants/<name>.yaml`, tag your items in `source.json`, and filter by those tags. See [docs/workflow.md](docs/workflow.md#3-create-a-variant-for-a-kind-of-role).
+
+</details>
+
+<details>
+<summary><b>🌍 A different language for one variant</b></summary>
+
+Add `x-cv-factory.i18n.es` to the items you want translated and render with `--lang es`. Fields you leave out fall back to English with a warning; see [docs/data-schema.md](docs/data-schema.md#rules-for-i18n).
+
+</details>
+
+## 🎨 Templates
+
+| Template | Look |
+|---|---|
+| `classic` (default) | Serif, black on white, centered header. |
+| `modern` | Sans-serif (bundled Source Sans 3), one accent color, left-aligned header. |
+| `clean` | Sans-serif, black ink, centered `Name \| Role` header with contact in three columns, full month names, hyphen bullets. Groups consecutive roles at the same employer under one heading. |
+
+All are single-column, plain text in reading order, with no icons, images or tables, so ATS parsers can extract them cleanly. Pick one per run with `--template`, or per variant with `template:` in the variant file. All render `work`, `volunteer`, `projects`, `education`, `skills`, `certificates`, `awards`, `publications`, `languages` and `interests`.
+
+**Several roles at one employer.** Write one `work` entry per role, with the same `name` and consecutive in the file. `clean` shows the employer once with the overall date range and lists the roles under it; `classic` and `modern` repeat the employer on each role.
+
+## 🔐 Privacy and your own data
+
+Real people live in `people/<slug>/` and are **git-ignored**, so personal data is never committed. Only the fictional `example` (minimal) and `showcase` (complete) are versioned. The same goes for generated PDFs: `output/*` is ignored except `output/showcase/`.
+
+```bash
+cp -r people/example people/your-name     # or start from showcase to see every option
+cv-factory validate --person your-name
+cv-factory render-all --person your-name
+```
+Slugs use lowercase letters, digits and hyphens only. To keep your own data under version control, make `people/<slug>/` its own **private** Git repository (see [docs/workflow.md](docs/workflow.md#5-version-with-git)).
+
+After changing a template, the data of `showcase` or the render logic, regenerate the versioned samples (rendered with `--no-date`) with:
+```bash
+npm run samples
+```
+
+## 📁 Project structure
+
+```
+people/
+  example/  showcase/        fictional people (versioned)
+  <you>/                     your data (git-ignored)
+templates/typst/
+  _shared/                   helpers, labels and fonts used by every template
+  classic/  modern/  clean/  one folder per template
+schema/                      JSON Resume + variant + extension schemas
+src/                         domain · ports · adapters · app · cli
+test/                        Vitest
+output/showcase/             versioned sample PDFs
+docs/                        architecture, data schema, workflow
+```
+
+## 📚 Documentation
+
+| | |
+|---|---|
+| [AGENTS.md](AGENTS.md) | Project rules and conventions |
+| [docs/architecture.md](docs/architecture.md) | Layers, renderer contract, templates |
+| [docs/data-schema.md](docs/data-schema.md) | Fields used, `x-cv-factory` extensions, variant format |
+| [docs/workflow.md](docs/workflow.md) | Step-by-step guides |
+
+## 📄 Licenses
+
+The `modern` and `clean` templates use **Source Sans 3** (Adobe), bundled in
+`templates/typst/_shared/fonts/` under the SIL Open Font License 1.1; the license
+is in that folder.

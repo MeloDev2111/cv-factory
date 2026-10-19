@@ -18,12 +18,21 @@ describe("naming", () => {
   });
 
   it("appends the date as _YYYY-MM-DD, keeping the name parseable", () => {
-    const name = outputFileName("ana-perez", "backend", "es", "classic", "2026-10-19");
+    const name = outputFileName("ana-perez", "backend", "es", "classic", { date: "2026-10-19" });
     expect(name).toBe("ana-perez_backend_es_classic_2026-10-19.pdf");
     // Identifiers never contain "_", so splitting on it recovers every field.
     expect(name.replace(/\.pdf$/, "").split("_")).toEqual([
       "ana-perez", "backend", "es", "classic", "2026-10-19",
     ]);
+  });
+
+  it("marks redacted files, before the date, so they are never mistaken for the full CV", () => {
+    expect(outputFileName("p", "backend", "en", "clean", { redacted: true })).toBe(
+      "p_backend_en_clean_redacted.pdf",
+    );
+    const dated = outputFileName("p", "backend", "en", "clean", { redacted: true, date: "2026-10-19" });
+    expect(dated).toBe("p_backend_en_clean_redacted_2026-10-19.pdf");
+    expect(dated).not.toBe(outputFileName("p", "backend", "en", "clean", { date: "2026-10-19" }));
   });
 
   it("formats the local calendar date with zero padding", () => {

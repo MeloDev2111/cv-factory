@@ -70,6 +70,45 @@ describe("app with the example person", () => {
     expect(path.basename(outPath)).toBe("showcase_frontend_en_modern_2026-10-19.pdf");
   });
 
+  describe("hiding personal data", () => {
+    const input = { person: "showcase", variant: "full", lang: "en" } as const;
+
+    it("removes the data from the composed resume and from what the renderer receives", async () => {
+      const full = await app.composeVariant(deps, input);
+      expect(full.resume.basics?.phone).toBeDefined();
+
+      const hidden = await app.composeVariant(deps, { ...input, hide: ["phone", "email"] });
+      expect(hidden.resume.basics).not.toHaveProperty("phone");
+      expect(hidden.resume.basics).not.toHaveProperty("email");
+
+      await app.render(deps, { ...input, hide: ["phone", "email"] });
+      expect(JSON.stringify(rendered.at(-1)?.resume)).not.toMatch(/\+351 900 000 000|sam\.rivera@/);
+    });
+
+    it("marks the file as redacted, so it never overwrites the full CV", async () => {
+      const full = await app.render(deps, input);
+      const shareable = await app.render(deps, { ...input, hide: ["phone"] });
+      expect(path.basename(full.outPath)).toBe("showcase_full_en_classic_2026-10-19.pdf");
+      expect(path.basename(shareable.outPath)).toBe("showcase_full_en_classic_redacted_2026-10-19.pdf");
+    });
+
+    it("surfaces the no-contact warning", async () => {
+      const { warnings } = await app.composeVariant(deps, {
+        ...input, hide: ["phone", "email", "website", "profiles"],
+      });
+      expect(warnings.some((w) => w.includes("nothing is left to contact"))).toBe(true);
+    });
+
+    it("renderAll applies it to every file", async () => {
+      const { rendered: files } = await app.renderAll(deps, {
+        person: "example", variants: ["default"], langs: ["en"], templates: ["classic"], hide: ["phone"],
+      });
+      expect(files.map((f) => path.basename(f.outPath))).toEqual([
+        "example_default_en_classic_redacted_2026-10-19.pdf",
+      ]);
+    });
+  });
+
   it("keeps each person's PDFs in their own folder", async () => {
     const a = await app.render(deps, { person: "example", variant: "default", lang: "en" });
     const b = await app.render(deps, { person: "showcase", variant: "full", lang: "en" });

@@ -37,8 +37,8 @@
   let cells = ()
   if get(basics, "phone") != none { cells.push(basics.phone) }
   if get(basics, "email") != none { cells.push(link("mailto:" + basics.email)[#basics.email]) }
-  let place = contact-parts().first()
-  if get(basics, "location") != none and place != none { cells.push(place) }
+  let place = place-part()
+  if place != none { cells.push(place) }
   for p in profile-parts() { cells.push(p) }
   if get(basics, "url") != none {
     let shown = basics.url.replace(regex("^https?://"), "").trim("/")
