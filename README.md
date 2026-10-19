@@ -97,19 +97,22 @@ npm test            # optional sanity check
 
 **3. Render your first CV**
 ```bash
-npm run dev -- render backend --person showcase --lang es
-# → output/showcase/showcase_backend_es_classic_<today>.pdf
+npm run dev -- render backend --person showcase --no-date
+# → output/showcase/showcase_backend_en_classic.pdf
 ```
+Only the variant and the person are needed: language (`en`), template (`classic`) and everything else take their defaults. `--no-date` gives a stable file name; without it the name ends in today's date. Spanish, other templates, hidden data and more are options you add when you need them: see [Usage](#-usage).
 
 Then make it yours: [create your own person](#-privacy-and-your-own-data).
 
 ## 🧠 How it works
 
-```
- people/<you>/source.json ─┐
- people/<you>/variants/*.yaml ─┼─►  compose  ─►  redact (optional)  ─►  render (Typst)  ─►  output/<you>/*.pdf
- templates/typst/<name>/ ──────┘    pick, order,    hide phone,           PDF
-                                    translate       email, address…
+```mermaid
+flowchart LR
+    A["people/&lt;you&gt;/source.json"] --> C
+    B["people/&lt;you&gt;/variants/*.yaml"] --> C
+    C["<b>compose</b><br/>pick, order, translate"] --> R["<b>redact</b> (optional)<br/>hide phone, email, address…"]
+    R --> T["<b>render</b> (Typst)<br/>templates/typst/&lt;name&gt;/"]
+    T --> P["output/&lt;you&gt;/*.pdf"]
 ```
 
 | Concept | Meaning | Lives in |
@@ -160,11 +163,19 @@ Examples below use `cvf`.
 | `--hide <list>` | compose, render, render-all | Hide specific data: `phone`, `email`, `address`, `location`, `website`, `profiles`, `image` (details under [Common scenarios](#-common-scenarios) → *Shareable version*). |
 | `--variants`, `--langs`, `--templates <list>` | render-all | Comma-separated subsets (each defaults to all). |
 
-```bash
-cvf render backend --person showcase --template modern --no-date
-cvf render-all --person showcase --langs es
-cvf compose backend --person showcase --lang es     # inspect what a template receives
-```
+The minimum is the variant (plus `--person` if there is more than one person); add options only when you need them:
+
+| You want… | Add | Example |
+|---|---|---|
+| Spanish (or English when the variant defaults to Spanish) | `--lang es` | `cvf render backend --person showcase --lang es` |
+| Another look | `--template modern` | `cvf render backend --person showcase --template modern` |
+| A stable file name, without the date | `--no-date` | `cvf render backend --person showcase --no-date` |
+| A copy without phone, email, address or photo | `--public` | `cvf render backend --person showcase --public` |
+| Hide only some data | `--hide phone,email` | `cvf render backend --person showcase --hide phone` |
+| Every variant, language and template | `render-all` | `cvf render-all --person showcase --langs es` |
+| See the data a template receives | `compose` | `cvf compose backend --person showcase --lang es` |
+
+Options combine: `cvf render backend --person showcase --lang es --template modern --public --no-date`.
 
 Missing translations are printed as warnings on stderr and fall back to English.
 Step-by-step guides (adding a job, creating a variant, translating, versioning) are in
