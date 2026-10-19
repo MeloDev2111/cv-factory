@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { access, cp, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { access, cp, mkdir, mkdtemp, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -67,6 +67,22 @@ export class TypstRenderer implements Renderer {
     } finally {
       await rm(stage, { recursive: true, force: true });
     }
+  }
+
+  /** Folders under the templates directory with a `main.typ`; `_shared` and other `_` folders are not templates. */
+  async listTemplates(): Promise<string[]> {
+    let entries;
+    try {
+      entries = await readdir(this.templatesDir, { withFileTypes: true });
+    } catch {
+      return [];
+    }
+    const names: string[] = [];
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.name.startsWith("_")) continue;
+      if (await exists(path.join(this.templatesDir, entry.name, "main.typ"))) names.push(entry.name);
+    }
+    return names.sort();
   }
 
   private async assertAvailable(): Promise<void> {

@@ -24,11 +24,20 @@ it.
 | Template | How the PDF looks (`templates/typst/<name>/`) |
 
 A PDF is the combination of person, variant, language and template, and is
-written to `output/<person>/<person>_<variant>_<lang>_<template>.pdf`, for example
-`output/showcase/showcase_backend_es_classic.pdf` (one folder per person, all
-git-ignored). Every dimension is in the name, so
-different combinations never overwrite each other (re-rendering the *same*
-combination does replace its file).
+written to `output/<person>/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf`,
+for example `output/showcase/showcase_backend_es_classic_2026-10-19.pdf` (one
+folder per person, all git-ignored).
+
+- Every dimension is in the name, so different combinations never overwrite each
+  other.
+- The date is **today's local date**, so the name doubles as a version: rendering
+  the same combination on another day creates a new file and keeps the old one
+  (useful to know exactly what you sent to an application). Rendering it again the
+  same day replaces that day's file.
+- Old files are never deleted by the tool; clean `output/<person>/` yourself when
+  you no longer need them.
+- `--no-date` leaves the date out (`showcase_backend_es_classic.pdf`) for a stable
+  name. The versioned sample PDFs use it so regenerating them does not rename files.
 
 ## Prerequisites
 
@@ -71,8 +80,9 @@ The PDFs generated from the fictional `showcase` person are versioned in
 [`output/showcase/`](output/showcase/), so you can see what the tool produces
 without installing anything: every variant in English and Spanish, plus the same
 CV (`full` variant) in each template (`..._classic.pdf`, `..._modern.pdf`,
-`..._clean.pdf`). After changing a template, the data of `showcase` or the render
-logic, regenerate them with:
+`..._clean.pdf`). They carry no date in their names (rendered with `--no-date`).
+After changing a template, the data of `showcase` or the render logic, regenerate
+them with:
 ```
 npm run samples
 ```
@@ -86,8 +96,10 @@ cv-factory list-people
 cv-factory list-variants --person showcase
 cv-factory validate --person showcase
 cv-factory compose backend --person showcase --lang es   # prints the resolved resume.json
-cv-factory render backend --person showcase --lang es    # writes output/showcase/showcase_backend_es_classic.pdf
-cv-factory render backend --person showcase --template modern   # writes output/showcase/showcase_backend_en_modern.pdf
+cv-factory render backend --person showcase --lang es    # writes output/showcase/showcase_backend_es_classic_<today>.pdf
+cv-factory render backend --person showcase --template modern   # writes output/showcase/showcase_backend_en_modern_<today>.pdf
+cv-factory render backend --person showcase --no-date    # writes output/showcase/showcase_backend_en_classic.pdf
+cv-factory render-all --person showcase                  # every variant x language x template
 ```
 `--person` can be omitted only when there is exactly one person. Missing
 translations are reported as warnings on stderr and fall back to English. If
@@ -115,6 +127,55 @@ overall date range and lists the roles under it; `classic` and `modern` repeat
 the employer on each role.
 
 ## Common scenarios
+
+### Generate every version in one command
+`render-all` renders every **variant × language × template** of a person:
+```
+cv-factory render-all --person melio-diaz
+# 2 variants x 2 languages x 3 templates = 12 PDFs in output/melio-diaz/
+```
+Narrow it down with comma-separated lists (each defaults to "all"):
+```
+cv-factory render-all --person showcase --variants backend,full --langs es --templates clean,modern
+cv-factory render-all --person showcase --no-date        # stable file names
+```
+Behavior to know:
+- The person's data is validated once, up front; invalid data stops the run before
+  anything is rendered.
+- An unknown variant, language or template is rejected with the list of valid ones.
+- If one combination fails, the others still render. The summary says how many
+  succeeded and failed, identical errors (for example `typst` not installed) are
+  printed once with the combinations they affect, and the exit code is 1.
+- Translation warnings are printed per combination (`variant/lang/template`).
+- Templates are discovered from `templates/typst/` (every folder with a `main.typ`),
+  so a new template is included automatically.
+
+To render a single combination use `render` (see Usage).
+
+### Skills grouped by category
+This comes from the JSON Resume specification, not from the templates. `skills` is
+a list of groups; each group has a `name` (the category), an optional `level` and
+its `keywords` (the items):
+```json
+{ "name": "Database", "keywords": ["PostgreSQL", "SQL Server", "MySQL"] }
+```
+Templates only print the name followed by its keywords. What this tool adds on top
+is that **tags, translations and limits apply to the whole group**, not to single
+keywords. Consequently a variant decides which *categories* appear.
+
+### Show some skills only in some variants
+Since tags belong to a group, split a group in two to control which keywords each
+variant shows: keep the common ones in a group without tags (shown everywhere) and
+move the rest into their own tagged group.
+```json
+{ "name": "Languages", "keywords": ["TypeScript", "SQL"] },
+{ "name": "Systems & data languages", "keywords": ["Go", "Python"],
+  "x-cv-factory": { "tags": ["backend", "data"] } }
+```
+With `filter: { tags: [frontend] }` the second group disappears; with
+`filter: { tags: [backend] }` both are shown. See `people/showcase/source.json`
+(the two "languages" groups) and compare `showcase_frontend_*` with
+`showcase_backend_*` in `output/showcase/`.
 
 ### Keep every certification in the source, show only some
 Put all of them in `source.json`. Each variant decides what to show, using three

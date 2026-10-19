@@ -243,8 +243,17 @@
     {
       "name": "Languages",
       "level": "Expert",
-      "keywords": ["TypeScript", "Go", "Python", "SQL"],
-      "x-cv-factory": { "tags": ["backend", "data", "frontend"], "i18n": { "es": { "name": "Lenguajes", "level": "Experto" } } }
+      "keywords": ["TypeScript", "SQL"],
+      "x-cv-factory": { "i18n": { "es": { "name": "Lenguajes", "level": "Experto" } } }
+    },
+    {
+      "name": "Systems & data languages",
+      "level": "Expert",
+      "keywords": ["Go", "Python"],
+      "x-cv-factory": {
+        "tags": ["backend", "data"],
+        "i18n": { "es": { "name": "Lenguajes de sistemas y datos", "level": "Experto" } }
+      }
     },
     {
       "name": "Backend & Data",

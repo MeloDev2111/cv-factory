@@ -7,7 +7,7 @@
  DATA                    COMPOSITION                      RENDER
  people/<slug>/          compose(source, variant, lang)   renderer(resume.json, template)
    source.json   ──┐                                        │
-   variants/*.yaml ┼──►  resolved resume.json  ───────────► output/<person>/<person>_<variant>_<lang>_<template>.pdf
+   variants/*.yaml ┼──►  resolved resume.json  ───────────► output/<person>/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf
  schema/*.json   ──┘     (filtered, ordered, translated)    (Typst)
 ```
 1. **Data layer.** A person's `source.json` (JSON Resume + `x-cv-factory`) and
@@ -45,12 +45,20 @@ Rules:
   (adapters are wired in the CLI entry point).
 - Only `typst-renderer` knows about Typst.
 
+## Time
+The app layer never reads the clock. The current date reaches it as `Deps.today()`
+(a `YYYY-MM-DD` string), wired in the CLI entry point from the local date, so use
+cases stay deterministic and testable. It is used only for the PDF file name.
+
 ## Renderer contract
 ```ts
 interface Renderer {
   render(resume: ResolvedResume, opts: { template: string; outPath: string }): Promise<void>;
+  listTemplates(): Promise<string[]>;   // used by `render-all` to discover templates
 }
 ```
+`typst-renderer` lists a template for every folder under `templates/typst/` that has
+a `main.typ` (folders starting with `_`, such as `_shared`, are not templates).
 Typst only reads files under `--root`, so `typst-renderer` stages everything in
 a temporary directory and compiles from there:
 ```

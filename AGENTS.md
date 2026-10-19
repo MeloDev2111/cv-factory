@@ -82,12 +82,18 @@ output/<person>/      generated PDFs, one folder per person (git-ignored)
 - Person slug, variant name and template name match `[a-z0-9-]+` (lowercase,
   digits, hyphens; no dots, underscores or spaces). Folder/file names equal these
   identifiers.
-- Output file: `output/<person>/<person>_<variant>_<lang>_<template>.pdf`, e.g.
-  `output/jane-doe/jane-doe_backend_es_classic.pdf`. The person is in both the
-  folder and the file name, so a PDF stays identifiable once it is moved or
-  attached. `_` is the only separator, which is
-  why it is forbidden inside identifiers. Every dimension of the combination is
-  in the name; never drop one, or renders overwrite each other.
+- Output file: `output/<person>/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf`,
+  e.g. `output/jane-doe/jane-doe_backend_es_classic_2026-10-19.pdf`. The person is
+  in both the folder and the file name, so a PDF stays identifiable once it is
+  moved or attached. `_` is the only separator, which is why it is forbidden
+  inside identifiers (the date uses hyphens, so the name splits cleanly on `_`).
+  Every dimension of the combination is in the name; never drop one, or renders
+  overwrite each other.
+- The date is the **local** date (not UTC) and is the file's version: another day
+  creates a new file, the same day replaces it. `--no-date` omits it (stable
+  name); the versioned `output/showcase/` samples use it so regenerating them does
+  not rename files. The date reaches the app layer through `Deps.today`, never
+  through `new Date()` in the app or domain.
 
 ## Languages
 - Base language is **English**: top-level fields in `source.json` are English.
@@ -105,8 +111,14 @@ is exactly one, and errors listing the options otherwise.
 - `cv-factory validate` — validate the person's `source.json` and variants.
 - `cv-factory compose <variant> [--lang en|es]` — merge source + variant +
   language into a resolved `resume.json`.
-- `cv-factory render <variant> [--lang en|es] [--template <name>]` — compose,
-  then render to `output/<person>/<person>_<variant>_<lang>_<template>.pdf`.
+- `cv-factory render <variant> [--lang en|es] [--template <name>] [--no-date]` —
+  compose, then render to
+  `output/<person>/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf`.
+- `cv-factory render-all [--variants a,b] [--langs en,es] [--templates x,y]
+  [--no-date]` — render every variant x language x template (each filter defaults
+  to "all"). Validates once up front, rejects unknown names, keeps going when one
+  combination fails and exits 1 if any did. Templates are discovered via
+  `Renderer.listTemplates()`.
 - `cv-factory list-variants` — list the person's variants.
 - `cv-factory list-people` — list available people.
 

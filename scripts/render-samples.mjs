@@ -1,5 +1,7 @@
 // Regenerates the versioned sample PDFs in output/showcase/ (every variant, both languages,
 // each variant's own template). Needs the `typst` binary (see README).
+// Samples are rendered with --no-date: a date in the name would rename every file on each
+// regeneration and clutter the Git history.
 import { execFileSync } from "node:child_process";
 import { readdirSync, rmSync } from "node:fs";
 import path from "node:path";
@@ -24,7 +26,7 @@ rmSync(path.join(root, "output", person), { recursive: true, force: true });
 
 for (const variant of variants) {
   for (const lang of ["en", "es"]) {
-    process.stdout.write(run("render", variant, "--person", person, "--lang", lang));
+    process.stdout.write(run("render", variant, "--person", person, "--lang", lang, "--no-date"));
   }
 }
 
@@ -35,6 +37,6 @@ const templates = readdirSync(path.join(root, "templates", "typst"), { withFileT
   .sort();
 for (const template of templates) {
   process.stdout.write(
-    run("render", "full", "--person", person, "--lang", "en", "--template", template),
+    run("render", "full", "--person", person, "--lang", "en", "--template", template, "--no-date"),
   );
 }

@@ -3,7 +3,7 @@ import { compose as composeResume } from "../domain/compose.js";
 import { CvFactoryError } from "../domain/errors.js";
 import { assertIdentifier, outputFileName } from "../domain/naming.js";
 import type { Lang, ResolvedResume, Source, ValidationIssue, Variant } from "../domain/types.js";
-import { BASE_LANG } from "../domain/types.js";
+import { BASE_LANG, LANGS } from "../domain/types.js";
 import type { PersonRepository } from "../ports/person-repository.js";
 import type { Renderer } from "../ports/renderer.js";
 import type { SchemaValidator } from "../ports/schema-validator.js";
@@ -13,6 +13,8 @@ export interface Deps {
   validator: SchemaValidator;
   renderer: Renderer;
   outputDir: string;
+  /** Today's date as `YYYY-MM-DD`; injected so the app layer stays deterministic in tests. */
+  today: () => string;
 }
 
 export const DEFAULT_TEMPLATE = "classic";
@@ -123,6 +125,8 @@ export async function composeVariant(deps: Deps, input: ComposeInput): Promise<C
 
 export interface RenderInput extends ComposeInput {
   template?: string;
+  /** Stamp today's date in the file name (default true). Turn off for stable names, e.g. versioned samples. */
+  dated?: boolean;
 }
 
 export interface RenderOutput {
@@ -138,8 +142,90 @@ export async function render(deps: Deps, input: RenderInput): Promise<RenderOutp
   const outPath = path.join(
     deps.outputDir,
     input.person,
-    outputFileName(input.person, variant.name, lang, template),
+    outputFileName(
+      input.person,
+      variant.name,
+      lang,
+      template,
+      input.dated === false ? undefined : deps.today(),
+    ),
   );
   await deps.renderer.render(resume, { template, outPath });
   return { outPath, warnings };
+}
+
+export interface RenderAllInput {
+  person: string;
+  /** Subsets to render; each defaults to everything available. */
+  variants?: string[];
+  langs?: Lang[];
+  templates?: string[];
+  dated?: boolean;
+}
+
+export interface RenderedFile {
+  variant: string;
+  lang: Lang;
+  template: string;
+  outPath: string;
+  warnings: string[];
+}
+
+export interface RenderFailure {
+  variant: string;
+  lang: Lang;
+  template: string;
+  message: string;
+}
+
+export interface RenderAllOutput {
+  rendered: RenderedFile[];
+  failures: RenderFailure[];
+}
+
+function pick(kind: string, requested: string[] | undefined, available: string[]): string[] {
+  if (requested === undefined) return available;
+  const unknown = requested.filter((name) => !available.includes(name));
+  if (unknown.length > 0) {
+    throw new CvFactoryError(
+      `Unknown ${kind} ${unknown.map((n) => `"${n}"`).join(", ")}. Available: ${available.join(", ") || "(none)"}.`,
+    );
+  }
+  return requested;
+}
+
+/**
+ * Renders every combination of variant x language x template for one person.
+ * Invalid data fails fast (once); a failure in one combination does not stop the others.
+ */
+export async function renderAll(deps: Deps, input: RenderAllInput): Promise<RenderAllOutput> {
+  const report = await validate(deps, input.person);
+  if (report.problems.length > 0) throw new CvFactoryError(report.problems.join("\n"));
+
+  const variants = pick("variant", input.variants, report.variants);
+  const langs = pick("language", input.langs, [...LANGS]) as Lang[];
+  const templates = pick("template", input.templates, await deps.renderer.listTemplates());
+
+  const rendered: RenderedFile[] = [];
+  const failures: RenderFailure[] = [];
+  for (const variant of variants) {
+    for (const lang of langs) {
+      for (const template of templates) {
+        try {
+          const result = await render(deps, {
+            person: input.person,
+            variant,
+            lang,
+            template,
+            ...(input.dated !== undefined && { dated: input.dated }),
+          });
+          rendered.push({ variant, lang, template, ...result });
+        } catch (error) {
+          if (!(error instanceof CvFactoryError)) throw error;
+          failures.push({ variant, lang, template, message: error.message });
+        }
+      }
+    }
+  }
+  return { rendered, failures };
 }

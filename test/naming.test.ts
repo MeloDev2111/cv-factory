@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isIdentifier, outputFileName } from "../src/domain/naming.js";
+import { formatDate, isIdentifier, outputFileName } from "../src/domain/naming.js";
 
 describe("naming", () => {
   it("accepts lowercase letters, digits and hyphens", () => {
@@ -15,6 +15,20 @@ describe("naming", () => {
     expect(outputFileName("ana-perez", "backend", "es", "classic")).toBe(
       "ana-perez_backend_es_classic.pdf",
     );
+  });
+
+  it("appends the date as _YYYY-MM-DD, keeping the name parseable", () => {
+    const name = outputFileName("ana-perez", "backend", "es", "classic", "2026-10-19");
+    expect(name).toBe("ana-perez_backend_es_classic_2026-10-19.pdf");
+    // Identifiers never contain "_", so splitting on it recovers every field.
+    expect(name.replace(/\.pdf$/, "").split("_")).toEqual([
+      "ana-perez", "backend", "es", "classic", "2026-10-19",
+    ]);
+  });
+
+  it("formats the local calendar date with zero padding", () => {
+    expect(formatDate(new Date(2026, 9, 5))).toBe("2026-10-05");
+    expect(formatDate(new Date(2026, 0, 31, 23, 59))).toBe("2026-01-31");
   });
 
   it("gives a different file name to every person/variant/lang/template combination", () => {

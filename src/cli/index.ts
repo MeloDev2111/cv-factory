@@ -9,6 +9,7 @@ import { TypstRenderer } from "../adapters/typst-renderer.js";
 import * as app from "../app/index.js";
 import type { Deps } from "../app/index.js";
 import { CvFactoryError } from "../domain/errors.js";
+import { formatDate } from "../domain/naming.js";
 import type { Lang } from "../domain/types.js";
 import { LANGS } from "../domain/types.js";
 
@@ -19,7 +20,12 @@ function createDeps(): Deps {
     validator: new AjvSchemaValidator(),
     renderer: new TypstRenderer(path.join(projectRoot, "templates", "typst")),
     outputDir: path.join(projectRoot, "output"),
+    today: () => formatDate(new Date()),
   };
+}
+
+function parseList(value: string): string[] {
+  return value.split(",").map((s) => s.trim()).filter(Boolean);
 }
 
 function parseLang(value: string): Lang {
@@ -94,23 +100,76 @@ program
 
 program
   .command("render")
-  .description("Compose a variant and render it to output/<person>/<person>_<variant>_<lang>_<template>.pdf")
+  .description(
+    "Compose a variant and render it to output/<person>/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf",
+  )
   .argument("<variant>")
   .option(...personOption)
   .option("-l, --lang <lang>", `language: ${LANGS.join("|")} (default: variant's lang, else en)`)
   .option("-t, --template <name>", "template (default: variant's template, else classic)")
-  .action(async (variant: string, opts: { person?: string; lang?: string; template?: string }) => {
-    const deps = createDeps();
-    const person = await app.resolvePerson(deps, opts.person);
-    const result = await app.render(deps, {
-      person,
-      variant,
-      ...(opts.lang !== undefined && { lang: parseLang(opts.lang) }),
-      ...(opts.template !== undefined && { template: opts.template }),
-    });
-    warn(result.warnings);
-    console.log(result.outPath);
-  });
+  .option("--no-date", "leave today's date out of the file name (stable name)")
+  .action(
+    async (
+      variant: string,
+      opts: { person?: string; lang?: string; template?: string; date: boolean },
+    ) => {
+      const deps = createDeps();
+      const person = await app.resolvePerson(deps, opts.person);
+      const result = await app.render(deps, {
+        person,
+        variant,
+        dated: opts.date,
+        ...(opts.lang !== undefined && { lang: parseLang(opts.lang) }),
+        ...(opts.template !== undefined && { template: opts.template }),
+      });
+      warn(result.warnings);
+      console.log(result.outPath);
+    },
+  );
+
+program
+  .command("render-all")
+  .description("Render every variant x language x template for a person")
+  .option(...personOption)
+  .option("--variants <list>", "comma-separated subset of variants (default: all)")
+  .option("--langs <list>", `comma-separated subset of ${LANGS.join(",")} (default: all)`)
+  .option("--templates <list>", "comma-separated subset of templates (default: all)")
+  .option("--no-date", "leave today's date out of the file names (stable names)")
+  .action(
+    async (opts: {
+      person?: string;
+      variants?: string;
+      langs?: string;
+      templates?: string;
+      date: boolean;
+    }) => {
+      const deps = createDeps();
+      const person = await app.resolvePerson(deps, opts.person);
+      const { rendered, failures } = await app.renderAll(deps, {
+        person,
+        dated: opts.date,
+        ...(opts.variants !== undefined && { variants: parseList(opts.variants) }),
+        ...(opts.langs !== undefined && { langs: parseList(opts.langs).map(parseLang) }),
+        ...(opts.templates !== undefined && { templates: parseList(opts.templates) }),
+      });
+      for (const file of rendered) {
+        console.log(file.outPath);
+        warn(file.warnings.map((w) => `${file.variant}/${file.lang}/${file.template}: ${w}`));
+      }
+      console.log(`${rendered.length} PDF(s) written, ${failures.length} failed.`);
+      if (failures.length > 0) {
+        // Identical messages (e.g. typst not installed) are shown once, with the combinations.
+        const byMessage = new Map<string, string[]>();
+        for (const f of failures) {
+          const key = `${f.variant}/${f.lang}/${f.template}`;
+          byMessage.set(f.message, [...(byMessage.get(f.message) ?? []), key]);
+        }
+        throw new CvFactoryError(
+          [...byMessage].map(([message, keys]) => `${keys.join(", ")}:\n${message}`).join("\n\n"),
+        );
+      }
+    },
+  );
 
 try {
   await program.parseAsync();

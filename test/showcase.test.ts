@@ -10,8 +10,9 @@ import { LANGS } from "../src/domain/types.js";
 const deps: Deps = {
   repo: new FsPersonRepository(path.join(projectRoot, "people")),
   validator: new AjvSchemaValidator(),
-  renderer: { async render() {} },
+  renderer: { async render() {}, async listTemplates() { return []; } },
   outputDir: "out",
+  today: () => "2026-10-19",
 };
 
 /** The fictional people double as documentation; they must stay valid and fully translated. */

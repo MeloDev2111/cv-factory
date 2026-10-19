@@ -54,16 +54,28 @@ not committed. Slugs are lowercase letters, digits and hyphens.
 ```
 cv-factory render backend --person <slug> --lang es
 ```
-Output: `output/<slug>/<slug>_backend_es_<template>.pdf` (for example
-`output/<slug>/<slug>_backend_es_classic.pdf`). Each person has their own folder
-under `output/`, which is git-ignored. The file name carries person, variant,
-language and template, so renders with different options never overwrite each
-other. Options:
+Output: `output/<slug>/<slug>_backend_es_<template>_<YYYY-MM-DD>.pdf` (for example
+`output/<slug>/<slug>_backend_es_classic_2026-10-19.pdf`). Each person has their
+own folder under `output/`, which is git-ignored. The file name carries person,
+variant, language, template and today's date, so renders with different options
+never overwrite each other and the date works as a version: a new day creates a
+new file, the same day replaces that day's. Options:
 - `--lang en|es` (default: the variant's `lang`, otherwise `en`)
 - `--template <name>` (default: the variant's `template`, otherwise `classic`)
+- `--no-date` leaves the date out of the name
 
 Untranslated fields in the chosen language are reported as warnings and rendered
 in English.
+
+**Everything at once.** To generate every variant in every language with every
+template (for example before comparing templates or sending a batch):
+```
+cv-factory render-all --person <slug>
+cv-factory render-all --person <slug> --variants backend --langs es --templates clean
+```
+It validates first, keeps going if one combination fails and prints a summary
+(`12 PDF(s) written, 0 failed.`). Old dated files stay in `output/<slug>/` until
+you delete them, which gives you a record of what you generated on each day.
 
 ## 5. Version with Git
 The tool, templates, schemas and the fictional `people/example/` and

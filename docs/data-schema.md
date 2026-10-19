@@ -33,6 +33,17 @@ Notes on how the bundled templates read these fields:
 - `awards[]` has a single `date`. For an award held over a period, omit `date` and
   write the period in `summary` ("January – December 2024").
 
+### Skills are groups
+In JSON Resume, `skills[]` is a list of **groups**: `name` is the category, `level`
+is optional and `keywords[]` are the items (`{ "name": "Database", "keywords":
+["PostgreSQL", "MySQL"] }`). The specification does not require `name` to be a
+category; that is the convention this project follows. The templates only print
+the name followed by its keywords. The extensions below (`tags`, `i18n`) and the
+variant options (`filter`, `require`, `sort`, `limits`) act on the **whole group**,
+never on a single keyword. To show certain keywords only in some variants, move
+them to their own tagged group and keep the common ones in an untagged group (see
+the README scenario "Show some skills only in some variants").
+
 ## Extensions: `x-cv-factory`
 
 ### On any item (`work[]`, `projects[]`, `skills[]`, ...)
