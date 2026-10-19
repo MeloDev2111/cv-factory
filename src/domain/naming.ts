@@ -16,7 +16,15 @@ export function assertIdentifier(kind: string, value: string): void {
   }
 }
 
-/** `<person>_<variant>_<lang>.pdf` — `_` never appears inside an identifier. */
-export function outputFileName(person: string, variant: string, lang: Lang): string {
-  return `${person}_${variant}_${lang}.pdf`;
+/**
+ * `<person>_<variant>_<lang>_<template>.pdf` — `_` never appears inside an identifier,
+ * and every dimension of the combination is in the name, so no render overwrites another.
+ */
+export function outputFileName(
+  person: string,
+  variant: string,
+  lang: Lang,
+  template: string,
+): string {
+  return `${person}_${variant}_${lang}_${template}.pdf`;
 }

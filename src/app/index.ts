@@ -134,7 +134,10 @@ export async function render(deps: Deps, input: RenderInput): Promise<RenderOutp
   const { resume, warnings, variant, lang } = await composeVariant(deps, input);
   const template = input.template ?? variant.template ?? DEFAULT_TEMPLATE;
   assertIdentifier("template name", template);
-  const outPath = path.join(deps.outputDir, outputFileName(input.person, variant.name, lang));
+  const outPath = path.join(
+    deps.outputDir,
+    outputFileName(input.person, variant.name, lang, template),
+  );
   await deps.renderer.render(resume, { template, outPath });
   return { outPath, warnings };
 }

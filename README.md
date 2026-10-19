@@ -24,9 +24,10 @@ it.
 | Template | How the PDF looks (`templates/typst/<name>/`) |
 
 A PDF is the combination of person, variant, language and template, and is
-written to `output/<person>_<variant>_<lang>.pdf`. The template is **not** part
-of the file name, so rendering the same person/variant/language with two
-templates overwrites the file; copy it away first if you want to keep both.
+written to `output/<person>_<variant>_<lang>_<template>.pdf`, for example
+`output/showcase_backend_es_classic.pdf`. Every dimension is in the name, so
+different combinations never overwrite each other (re-rendering the *same*
+combination does replace its file).
 
 ## Prerequisites
 
@@ -72,8 +73,8 @@ cv-factory list-people
 cv-factory list-variants --person showcase
 cv-factory validate --person showcase
 cv-factory compose backend --person showcase --lang es   # prints the resolved resume.json
-cv-factory render backend --person showcase --lang es    # writes output/showcase_backend_es.pdf
-cv-factory render backend --person showcase --template modern
+cv-factory render backend --person showcase --lang es    # writes output/showcase_backend_es_classic.pdf
+cv-factory render backend --person showcase --template modern   # writes output/showcase_backend_en_modern.pdf
 ```
 `--person` can be omitted only when there is exactly one person. Missing
 translations are reported as warnings on stderr and fall back to English. If

@@ -82,9 +82,10 @@ output/               generated PDFs (git-ignored)
 - Person slug, variant name and template name match `[a-z0-9-]+` (lowercase,
   digits, hyphens; no dots, underscores or spaces). Folder/file names equal these
   identifiers.
-- Output file: `output/<person>_<variant>_<lang>.pdf`, e.g.
-  `output/jane-doe_backend_es.pdf`. `_` is the only separator, which is why it
-  is forbidden inside identifiers.
+- Output file: `output/<person>_<variant>_<lang>_<template>.pdf`, e.g.
+  `output/jane-doe_backend_es_classic.pdf`. `_` is the only separator, which is
+  why it is forbidden inside identifiers. Every dimension of the combination is
+  in the name; never drop one, or renders overwrite each other.
 
 ## Languages
 - Base language is **English**: top-level fields in `source.json` are English.
@@ -93,8 +94,8 @@ output/               generated PDFs (git-ignored)
   warning listing the untranslated fields; they never fail the build.
 - Fields that need no translation (certifications, company/institution names,
   URLs, dates, skill keywords) simply carry no `i18n`.
-- Template labels (section titles, date format) come from the template's own
-  `i18n.json`.
+- Template labels (section titles, month names) come from
+  `templates/typst/_shared/i18n.json`.
 
 ## Commands
 All commands accept `--person <slug>`; it defaults to the only person when there
@@ -103,7 +104,7 @@ is exactly one, and errors listing the options otherwise.
 - `cv-factory compose <variant> [--lang en|es]` — merge source + variant +
   language into a resolved `resume.json`.
 - `cv-factory render <variant> [--lang en|es] [--template <name>]` — compose,
-  then render to `output/<person>_<variant>_<lang>.pdf`.
+  then render to `output/<person>_<variant>_<lang>_<template>.pdf`.
 - `cv-factory list-variants` — list the person's variants.
 - `cv-factory list-people` — list available people.
 

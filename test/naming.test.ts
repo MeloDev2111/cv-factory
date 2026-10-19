@@ -11,7 +11,19 @@ describe("naming", () => {
     expect(isIdentifier(value)).toBe(false);
   });
 
-  it("builds the output file name with underscores", () => {
-    expect(outputFileName("ana-perez", "backend", "es")).toBe("ana-perez_backend_es.pdf");
+  it("builds the output file name with underscores, including the template", () => {
+    expect(outputFileName("ana-perez", "backend", "es", "classic")).toBe(
+      "ana-perez_backend_es_classic.pdf",
+    );
+  });
+
+  it("gives a different file name to every person/variant/lang/template combination", () => {
+    const names = new Set<string>();
+    for (const variant of ["a", "b"])
+      for (const lang of ["en", "es"] as const)
+        for (const template of ["classic", "modern"]) {
+          names.add(outputFileName("p", variant, lang, template));
+        }
+    expect(names.size).toBe(8);
   });
 });

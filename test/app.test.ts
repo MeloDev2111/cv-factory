@@ -36,10 +36,23 @@ describe("app with the example person", () => {
     expect(report.variants).toEqual(["backend", "default"]);
   });
 
-  it("renders to <person>_<variant>_<lang>.pdf with the variant's defaults", async () => {
+  it("renders to <person>_<variant>_<lang>_<template>.pdf with the variant's defaults", async () => {
     const { outPath } = await app.render(deps, { person: "example", variant: "backend", lang: "es" });
-    expect(outPath).toBe(path.join("out", "example_backend_es.pdf"));
+    expect(outPath).toBe(path.join("out", "example_backend_es_classic.pdf"));
     expect(rendered.at(-1)?.options.template).toBe("classic");
+  });
+
+  it("puts the chosen template in the file name, so templates never overwrite each other", async () => {
+    const input = { person: "example", variant: "backend", lang: "en" } as const;
+    const classic = await app.render(deps, { ...input, template: "classic" });
+    const modern = await app.render(deps, { ...input, template: "modern" });
+    expect(classic.outPath).not.toBe(modern.outPath);
+    expect(modern.outPath).toBe(path.join("out", "example_backend_en_modern.pdf"));
+  });
+
+  it("uses the variant's template when none is given", async () => {
+    const { outPath } = await app.render(deps, { person: "showcase", variant: "frontend", lang: "en" });
+    expect(outPath).toBe(path.join("out", "showcase_frontend_en_modern.pdf"));
   });
 
   it("fails clearly for a variant that does not exist", async () => {
