@@ -24,7 +24,7 @@ const deps: Deps = {
       return TEMPLATES;
     },
   },
-  outputDir: "out",
+  peopleDir: "people",
   today: () => "2026-10-19",
 };
 
@@ -46,7 +46,7 @@ describe("app with the example person", () => {
 
   it("renders to <person>_<variant>_<lang>_<template>_<date>.pdf with the variant's defaults", async () => {
     const { outPath } = await app.render(deps, { person: "example", variant: "backend", lang: "es" });
-    expect(outPath).toBe(path.join("out", "example", "example_backend_es_classic_2026-10-19.pdf"));
+    expect(outPath).toBe(path.join("people", "example", "output", "example_backend_es_classic_2026-10-19.pdf"));
     expect(rendered.at(-1)?.options.template).toBe("classic");
   });
 
@@ -55,14 +55,14 @@ describe("app with the example person", () => {
     const classic = await app.render(deps, { ...input, template: "classic" });
     const modern = await app.render(deps, { ...input, template: "modern" });
     expect(classic.outPath).not.toBe(modern.outPath);
-    expect(modern.outPath).toBe(path.join("out", "example", "example_backend_en_modern_2026-10-19.pdf"));
+    expect(modern.outPath).toBe(path.join("people", "example", "output", "example_backend_en_modern_2026-10-19.pdf"));
   });
 
   it("leaves the date out of the name with dated: false (stable names for versioned samples)", async () => {
     const { outPath } = await app.render(deps, {
       person: "showcase", variant: "frontend", lang: "en", dated: false,
     });
-    expect(outPath).toBe(path.join("out", "showcase", "showcase_frontend_en_modern.pdf"));
+    expect(outPath).toBe(path.join("people", "showcase", "output", "showcase_frontend_en_modern.pdf"));
   });
 
   it("uses the variant's template when none is given", async () => {
@@ -112,8 +112,8 @@ describe("app with the example person", () => {
   it("keeps each person's PDFs in their own folder", async () => {
     const a = await app.render(deps, { person: "example", variant: "default", lang: "en" });
     const b = await app.render(deps, { person: "showcase", variant: "full", lang: "en" });
-    expect(path.dirname(a.outPath)).toBe(path.join("out", "example"));
-    expect(path.dirname(b.outPath)).toBe(path.join("out", "showcase"));
+    expect(path.dirname(a.outPath)).toBe(path.join("people", "example", "output"));
+    expect(path.dirname(b.outPath)).toBe(path.join("people", "showcase", "output"));
   });
 
   describe("renderAll", () => {

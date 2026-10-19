@@ -14,7 +14,8 @@ export interface Deps {
   repo: PersonRepository;
   validator: SchemaValidator;
   renderer: Renderer;
-  outputDir: string;
+  /** Root of the people folders; each person's PDFs go to <peopleDir>/<slug>/output/. */
+  peopleDir: string;
   /** Today's date as `YYYY-MM-DD`; injected so the app layer stays deterministic in tests. */
   today: () => string;
 }
@@ -148,10 +149,12 @@ export async function render(deps: Deps, input: RenderInput): Promise<RenderOutp
   const { resume, warnings, variant, lang } = await composeVariant(deps, input);
   const template = input.template ?? variant.template ?? DEFAULT_TEMPLATE;
   assertIdentifier("template name", template);
-  // One folder per person: easy to share or delete, and ignorable per person in Git.
+  // Inside the person's folder: inputs and outputs travel together, and a private
+  // per-person repository can version or ignore its own PDFs.
   const outPath = path.join(
-    deps.outputDir,
+    deps.peopleDir,
     input.person,
+    "output",
     outputFileName(input.person, variant.name, lang, template, {
       ...(input.dated !== false && { date: deps.today() }),
       redacted: (input.hide ?? []).length > 0,

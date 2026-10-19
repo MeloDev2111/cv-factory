@@ -41,30 +41,30 @@ Real output from the fictional `showcase` person (click a preview to open its PD
 <table>
   <tr>
     <td align="center" width="33%">
-      <a href="output/showcase/showcase_backend_en_classic.pdf"><img src="docs/img/preview-classic.png" alt="classic template preview"></a><br>
+      <a href="people/showcase/output/showcase_backend_en_classic.pdf"><img src="docs/img/preview-classic.png" alt="classic template preview"></a><br>
       <b>classic</b> · backend
     </td>
     <td align="center" width="33%">
-      <a href="output/showcase/showcase_frontend_en_modern.pdf"><img src="docs/img/preview-modern.png" alt="modern template preview"></a><br>
+      <a href="people/showcase/output/showcase_frontend_en_modern.pdf"><img src="docs/img/preview-modern.png" alt="modern template preview"></a><br>
       <b>modern</b> · frontend
     </td>
     <td align="center" width="33%">
-      <a href="output/showcase/showcase_full_en_clean.pdf"><img src="docs/img/preview-clean.png" alt="clean template preview"></a><br>
+      <a href="people/showcase/output/showcase_full_en_clean.pdf"><img src="docs/img/preview-clean.png" alt="clean template preview"></a><br>
       <b>clean</b> · full
     </td>
   </tr>
 </table>
 
-All the generated PDFs are versioned in [`output/showcase/`](output/showcase/):
+All the generated PDFs are versioned in [`people/showcase/output/`](people/showcase/output/):
 
 | Template · variant | English | Español |
 |---|---|---|
-| **classic** · backend | [PDF](output/showcase/showcase_backend_en_classic.pdf) | [PDF](output/showcase/showcase_backend_es_classic.pdf) |
-| **modern** · frontend | [PDF](output/showcase/showcase_frontend_en_modern.pdf) | [PDF](output/showcase/showcase_frontend_es_modern.pdf) |
-| **classic** · full (everything) | [PDF](output/showcase/showcase_full_en_classic.pdf) | [PDF](output/showcase/showcase_full_es_classic.pdf) |
-| **modern** · full | [PDF](output/showcase/showcase_full_en_modern.pdf) | |
-| **clean** · full | [PDF](output/showcase/showcase_full_en_clean.pdf) | |
-| 🔒 **shareable** (`--public`) · backend | [PDF](output/showcase/showcase_backend_en_classic_redacted.pdf) | |
+| **classic** · backend | [PDF](people/showcase/output/showcase_backend_en_classic.pdf) | [PDF](people/showcase/output/showcase_backend_es_classic.pdf) |
+| **modern** · frontend | [PDF](people/showcase/output/showcase_frontend_en_modern.pdf) | [PDF](people/showcase/output/showcase_frontend_es_modern.pdf) |
+| **classic** · full (everything) | [PDF](people/showcase/output/showcase_full_en_classic.pdf) | [PDF](people/showcase/output/showcase_full_es_classic.pdf) |
+| **modern** · full | [PDF](people/showcase/output/showcase_full_en_modern.pdf) | |
+| **clean** · full | [PDF](people/showcase/output/showcase_full_en_clean.pdf) | |
+| 🔒 **shareable** (`--public`) · backend | [PDF](people/showcase/output/showcase_backend_en_classic_redacted.pdf) | |
 
 Compare `backend` and `frontend` to see how one source produces different CVs.
 
@@ -98,7 +98,7 @@ npm test            # optional sanity check
 **3. Render your first CV**
 ```bash
 npm run dev -- render backend --person showcase --no-date
-# → output/showcase/showcase_backend_en_classic.pdf
+# → people/showcase/output/showcase_backend_en_classic.pdf
 ```
 Only the variant and the person are needed: language (`en`), template (`classic`) and everything else take their defaults. `--no-date` gives a stable file name; without it the name ends in today's date. Spanish, other templates, hidden data and more are options you add when you need them: see [Usage](#-usage).
 
@@ -112,7 +112,7 @@ flowchart LR
     B["people/&lt;you&gt;/variants/*.yaml"] --> C
     C["<b>compose</b><br/>pick, order, translate"] --> R["<b>redact</b> (optional)<br/>hide phone, email, address…"]
     R --> T["<b>render</b> (Typst)<br/>templates/typst/&lt;name&gt;/"]
-    T --> P["output/&lt;you&gt;/*.pdf"]
+    T --> P["people/&lt;you&gt;/output/*.pdf"]
 ```
 
 | Concept | Meaning | Lives in |
@@ -126,13 +126,13 @@ flowchart LR
 A PDF is the combination of all of them, written to:
 
 ```
-output/<person>/<person>_<variant>_<lang>_<template>[_redacted]_<YYYY-MM-DD>.pdf
-output/showcase/showcase_backend_es_classic_2026-10-19.pdf
+people/<person>/output/<person>_<variant>_<lang>_<template>[_redacted]_<YYYY-MM-DD>.pdf
+people/showcase/output/showcase_backend_es_classic_2026-10-19.pdf
 ```
 
 - Every dimension is in the name, so different combinations never overwrite each other.
 - The date is **today's local date**: it works as a version. Another day creates a new file; the same day replaces that day's.
-- The tool never deletes old files; clean `output/<person>/` yourself.
+- The tool never deletes old files; clean `people/<person>/output/` yourself.
 - `--no-date` leaves the date out for a stable name (the versioned samples use it).
 - Versions with data hidden carry `_redacted`, so they never replace the full CV.
 
@@ -189,7 +189,7 @@ Step-by-step guides (adding a job, creating a variant, translating, versioning) 
 `render-all` renders every **variant × language × template** of a person:
 ```bash
 cvf render-all --person your-name
-# 2 variants × 2 languages × 3 templates = 12 PDFs in output/your-name/
+# 2 variants × 2 languages × 3 templates = 12 PDFs in people/your-name/output/
 cvf render-all --person showcase --variants backend,full --langs es --templates clean,modern
 cvf render-all --person showcase --no-date          # stable file names
 ```
@@ -315,7 +315,7 @@ All are single-column, plain text in reading order, with no icons, images or tab
 
 ## 🔐 Privacy and your own data
 
-Real people live in `people/<slug>/` and are **git-ignored**, so personal data is never committed. Only the fictional `example` (minimal) and `showcase` (complete) are versioned. The same goes for generated PDFs: `output/*` is ignored except `output/showcase/`.
+Real people live in `people/<slug>/` and are **git-ignored**, so personal data is never committed. Only the fictional `example` (minimal) and `showcase` (complete) are versioned. Generated PDFs are written to `people/<you>/output/`, inside the same git-ignored folder; only `people/showcase/output/` is versioned.
 
 ```bash
 cp -r people/example people/your-name     # or start from showcase to see every option
@@ -341,7 +341,6 @@ templates/typst/
 schema/                      JSON Resume + variant + extension schemas
 src/                         domain · ports · adapters · app · cli
 test/                        Vitest
-output/showcase/             versioned sample PDFs
 docs/                        architecture, data schema, workflow
 ```
 

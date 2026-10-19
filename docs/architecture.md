@@ -7,7 +7,7 @@
  DATA                    COMPOSITION                      RENDER
  people/<slug>/          compose(source, variant, lang)   renderer(resume.json, template)
    source.json   ──┐                                        │
-   variants/*.yaml ┼──►  resolved resume.json  ───────────► output/<person>/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf
+   variants/*.yaml ┼──►  resolved resume.json  ───────────► people/<person>/output/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf
  schema/*.json   ──┘     (filtered, ordered, translated)    (Typst)
 ```
 1. **Data layer.** A person's `source.json` (JSON Resume + `x-cv-factory`) and

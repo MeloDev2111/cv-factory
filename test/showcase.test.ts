@@ -11,7 +11,7 @@ const deps: Deps = {
   repo: new FsPersonRepository(path.join(projectRoot, "people")),
   validator: new AjvSchemaValidator(),
   renderer: { async render() {}, async listTemplates() { return []; } },
-  outputDir: "out",
+  peopleDir: "people",
   today: () => "2026-10-19",
 };
 

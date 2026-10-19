@@ -55,9 +55,9 @@ not committed. Slugs are lowercase letters, digits and hyphens.
 ```
 cvf render backend --person <slug> --lang es
 ```
-Output: `output/<slug>/<slug>_backend_es_<template>_<YYYY-MM-DD>.pdf` (for example
-`output/<slug>/<slug>_backend_es_classic_2026-10-19.pdf`). Each person has their
-own folder under `output/`, which is git-ignored. The file name carries person,
+Output: `people/<slug>/output/<slug>_backend_es_<template>_<YYYY-MM-DD>.pdf` (for example
+`people/<slug>/output/<slug>_backend_es_classic_2026-10-19.pdf`). PDFs are written
+inside the person's own folder, next to their data, which is git-ignored. The file name carries person,
 variant, language, template and today's date, so renders with different options
 never overwrite each other and the date works as a version: a new day creates a
 new file, the same day replaces that day's. Options:
@@ -85,7 +85,7 @@ cvf render-all --person <slug>
 cvf render-all --person <slug> --variants backend --langs es --templates clean
 ```
 It validates first, keeps going if one combination fails and prints a summary
-(`12 PDF(s) written, 0 failed.`). Old dated files stay in `output/<slug>/` until
+(`12 PDF(s) written, 0 failed.`). Old dated files stay in `people/<slug>/output/` until
 you delete them, which gives you a record of what you generated on each day.
 
 ## 5. Version with Git

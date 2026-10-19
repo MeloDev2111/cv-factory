@@ -67,6 +67,7 @@ people/
   showcase/           complete fictional person (versioned)
     source.json
     variants/
+    output/           generated PDFs (versioned only for showcase)
   <slug>/             real people (git-ignored)
 templates/typst/
   _shared/            lib.typ, i18n.json and fonts/ (Source Sans 3) used by every template
@@ -75,7 +76,6 @@ schema/               vendored JSON Resume schema + variant schema
 src/                  see Architecture
 test/
 docs/
-output/<person>/      generated PDFs, one folder per person (git-ignored)
 ```
 
 ## README previews
@@ -97,8 +97,8 @@ typst compile --root <stage> --ignore-system-fonts \
 - Person slug, variant name and template name match `[a-z0-9-]+` (lowercase,
   digits, hyphens; no dots, underscores or spaces). Folder/file names equal these
   identifiers.
-- Output file: `output/<person>/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf`,
-  e.g. `output/jane-doe/jane-doe_backend_es_classic_2026-10-19.pdf`. The person is
+- Output file: `people/<person>/output/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf`,
+  e.g. `people/jane-doe/output/jane-doe_backend_es_classic_2026-10-19.pdf`. The person is
   in both the folder and the file name, so a PDF stays identifiable once it is
   moved or attached. `_` is the only separator, which is why it is forbidden
   inside identifiers (the date uses hyphens, so the name splits cleanly on `_`).
@@ -109,7 +109,7 @@ typst compile --root <stage> --ignore-system-fonts \
   full CV. Never drop this marker.
 - The date is the **local** date (not UTC) and is the file's version: another day
   creates a new file, the same day replaces it. `--no-date` omits it (stable
-  name); the versioned `output/showcase/` samples use it so regenerating them does
+  name); the versioned `people/showcase/output/` samples use it so regenerating them does
   not rename files. The date reaches the app layer through `Deps.today`, never
   through `new Date()` in the app or domain.
 
@@ -133,7 +133,7 @@ is exactly one, and errors listing the options otherwise.
   language into a resolved `resume.json`.
 - `cvf render <variant> [--lang en|es] [--template <name>] [--no-date]` —
   compose, then render to
-  `output/<person>/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf`.
+  `people/<person>/output/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf`.
 - `compose`, `render` and `render-all` also accept `--public` (hides phone, email,
   address, image) and `--hide <list>` (any of phone, email, address, location,
   website, profiles, image). Redaction is the pure `domain/redact.ts`, applied after
@@ -178,11 +178,12 @@ scope the filter with `filter.sections` when they would conflict.
 
 ## Personal data
 `people/*` is git-ignored except the fictional `people/example/` and
-`people/showcase/`; likewise `output/*` except `output/showcase/`, whose sample
-PDFs are versioned (regenerate with `npm run samples` after changing a template
-or the showcase data). Never commit real personal
-data or generated PDFs. A real person's folder may be its own private Git
-repository, which is where their data is versioned and tagged. To publish a
+`people/showcase/`. Generated PDFs live in `people/<slug>/output/`, so a person's
+inputs and outputs travel together; only `people/showcase/output/` has versioned
+sample PDFs (regenerate with `npm run samples` after changing a template or the
+showcase data). Never commit real personal data or generated PDFs. A real
+person's folder may be its own private Git repository, which is where their data
+is versioned and tagged (decide there whether `output/` is committed or ignored). To publish a
 public-safe person, un-ignore that folder explicitly in `.gitignore`.
 
 ## What NOT to do

@@ -17,11 +17,12 @@ import { LANGS } from "../domain/types.js";
 
 /** Composition root: the only place that wires adapters to ports. */
 function createDeps(): Deps {
+  const peopleDir = path.join(projectRoot, "people");
   return {
-    repo: new FsPersonRepository(path.join(projectRoot, "people")),
+    repo: new FsPersonRepository(peopleDir),
     validator: new AjvSchemaValidator(),
     renderer: new TypstRenderer(path.join(projectRoot, "templates", "typst")),
-    outputDir: path.join(projectRoot, "output"),
+    peopleDir,
     today: () => formatDate(new Date()),
   };
 }
@@ -132,7 +133,7 @@ program
 program
   .command("render")
   .description(
-    "Compose a variant and render it to output/<person>/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf",
+    "Compose a variant and render it to people/<person>/output/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf",
   )
   .argument("<variant>")
   .option(...personOption)

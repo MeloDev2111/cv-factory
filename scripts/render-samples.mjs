@@ -1,4 +1,4 @@
-// Regenerates the versioned sample PDFs in output/showcase/ (every variant, both languages,
+// Regenerates the versioned sample PDFs in people/showcase/output/ (every variant, both languages,
 // each variant's own template). Needs the `typst` binary (see README).
 // Samples are rendered with --no-date: a date in the name would rename every file on each
 // regeneration and clutter the Git history.
@@ -22,7 +22,7 @@ const variants = readdirSync(path.join(root, "people", person, "variants"))
   .sort();
 
 // Start clean so renamed or removed variants do not leave stale PDFs behind.
-rmSync(path.join(root, "output", person), { recursive: true, force: true });
+rmSync(path.join(root, "people", person, "output"), { recursive: true, force: true });
 
 for (const variant of variants) {
   for (const lang of ["en", "es"]) {
