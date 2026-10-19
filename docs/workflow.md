@@ -54,8 +54,9 @@ not committed. Slugs are lowercase letters, digits and hyphens.
 ```
 cv-factory render backend --person <slug> --lang es
 ```
-Output: `output/<slug>_backend_es_<template>.pdf` (for example
-`output/<slug>_backend_es_classic.pdf`). The file name carries person, variant,
+Output: `output/<slug>/<slug>_backend_es_<template>.pdf` (for example
+`output/<slug>/<slug>_backend_es_classic.pdf`). Each person has their own folder
+under `output/`, which is git-ignored. The file name carries person, variant,
 language and template, so renders with different options never overwrite each
 other. Options:
 - `--lang en|es` (default: the variant's `lang`, otherwise `en`)

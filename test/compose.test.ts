@@ -171,6 +171,14 @@ describe("compose", () => {
     expect(compose(source, v, "es").resume.basics?.label).toBe("Ingeniera Backend");
   });
 
+  it("does not warn about basics fields that the variant overrides", () => {
+    const noLabelTranslation = {
+      basics: { name: "J", label: "Dev", summary: "s", "x-cv-factory": { i18n: { es: { summary: "r" } } } },
+    } as unknown as Source;
+    expect(compose(noLabelTranslation, variant(), "es").warnings[0]).toContain("label");
+    expect(compose(noLabelTranslation, variant({ basics: { label: "Backend" } }), "es").warnings).toEqual([]);
+  });
+
   it("records variant and language in meta and does not mutate the source", () => {
     const before = JSON.stringify(source);
     const { resume } = compose(source, variant(), "es");

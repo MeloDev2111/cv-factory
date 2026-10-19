@@ -1,10 +1,16 @@
 {
   "en": {
     "present": "Present",
-    "score": "Score",
     "courses": "Courses",
     "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "monthsLong": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    "countries": {
+      "AR": "Argentina", "BR": "Brazil", "CL": "Chile", "CO": "Colombia", "DE": "Germany",
+      "ES": "Spain", "FR": "France", "GB": "United Kingdom", "MX": "Mexico", "PE": "Peru",
+      "PT": "Portugal", "US": "United States"
+    },
     "sections": {
+      "profile": "Professional Profile",
       "work": "Experience",
       "volunteer": "Volunteering",
       "projects": "Projects",
@@ -19,17 +25,23 @@
   },
   "es": {
     "present": "Actualidad",
-    "score": "Promedio",
     "courses": "Cursos",
     "months": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+    "monthsLong": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+    "countries": {
+      "AR": "Argentina", "BR": "Brasil", "CL": "Chile", "CO": "Colombia", "DE": "Alemania",
+      "ES": "España", "FR": "Francia", "GB": "Reino Unido", "MX": "México", "PE": "Perú",
+      "PT": "Portugal", "US": "Estados Unidos"
+    },
     "sections": {
+      "profile": "Perfil Profesional",
       "work": "Experiencia",
       "volunteer": "Voluntariado",
       "projects": "Proyectos",
       "skills": "Habilidades",
       "education": "Educación",
       "certificates": "Certificaciones",
-      "awards": "Premios",
+      "awards": "Logros",
       "publications": "Publicaciones",
       "languages": "Idiomas",
       "interests": "Intereses"

@@ -7,7 +7,7 @@
  DATA                    COMPOSITION                      RENDER
  people/<slug>/          compose(source, variant, lang)   renderer(resume.json, template)
    source.json   ──┐                                        │
-   variants/*.yaml ┼──►  resolved resume.json  ───────────► output/<person>_<variant>_<lang>_<template>.pdf
+   variants/*.yaml ┼──►  resolved resume.json  ───────────► output/<person>/<person>_<variant>_<lang>_<template>.pdf
  schema/*.json   ──┘     (filtered, ordered, translated)    (Typst)
 ```
 1. **Data layer.** A person's `source.json` (JSON Resume + `x-cv-factory`) and
@@ -58,7 +58,8 @@ a temporary directory and compiles from there:
 <stage>/templates/<name>/main.typ    the whole templates folder, copied as-is
 ```
 It runs `typst compile --root <stage> --ignore-system-fonts
-[--font-path <template>/fonts] <stage>/templates/<name>/main.typ <out.pdf>`,
+[--font-path <stage>/templates/_shared/fonts] [--font-path <template>/fonts]
+<stage>/templates/<name>/main.typ <out.pdf>`,
 surfaces Typst's stderr on failure and always removes the stage directory. A
 missing `typst` binary is detected up front with install instructions; the
 binary can be overridden with the `CV_FACTORY_TYPST` environment variable.
@@ -66,11 +67,12 @@ binary can be overridden with the `CV_FACTORY_TYPST` environment variable.
 ## Templates
 ```
 templates/typst/
-  _shared/lib.typ      loads /resume.json; date, link and contact helpers
-  _shared/i18n.json    labels per language: section titles, month names, "present"
+  _shared/lib.typ      loads /resume.json; date, link, contact and grouping helpers
+  _shared/i18n.json    labels per language: section titles, month names, country names, "present"
+  _shared/fonts/       Source Sans 3 (OFL) available to every template
   classic/main.typ     serif, centered header
   modern/main.typ      sans-serif, accent color
-  modern/fonts/        Source Sans 3 (OFL) bundled with the template
+  clean/main.typ       sans-serif, black ink, roles grouped by employer
 ```
 A template is a folder with a `main.typ` that imports
 `/templates/_shared/lib.typ`. It consumes only the resolved `resume.json` and
@@ -84,13 +86,16 @@ Rules the bundled templates follow, so PDFs stay ATS friendly:
 - Plain text in reading order; no icons, images or tables for body content.
 - No letter-spacing (`tracking`) on headings: it makes text extraction read
   "E X P E R I E N C E", which ATS parsers do not recognize as a section.
+- No hyphenation and no justified text in `clean`: split words ("asegu-rando")
+  hurt extraction, and justifying without hyphenation squeezes word spaces.
 - Short list sections (`skills`, `certificates`, `languages`, `interests`) are
   kept on one page; long sections flow across pages.
 
-Fonts: `classic` uses Typst's bundled Libertinus Serif. A template that needs
-other fonts ships them in `<template>/fonts/`; the renderer passes that folder as
-`--font-path` and always runs with `--ignore-system-fonts`, so the PDF does not
-depend on what is installed on the machine.
+Fonts: `classic` uses Typst's bundled Libertinus Serif. `modern` and `clean` use
+Source Sans 3 from `_shared/fonts/`. A template that needs other fonts ships them
+in `<template>/fonts/`. The renderer passes both folders as `--font-path` and
+always runs with `--ignore-system-fonts`, so the PDF does not depend on what is
+installed on the machine.
 
 ## Languages
 `compose` is language-aware; renderers are not. Content translation is resolved

@@ -12,19 +12,20 @@
 /// Non-empty array -> true. none counts as empty.
 #let has(items) = items != none and items.len() > 0
 
-/// "2022-03" -> "Mar 2022", "2019" -> "2019", none -> none.
-#let fmt-date(s) = {
+/// "2022-03" -> "Mar 2022" ("March 2022" with long: true), "2019" -> "2019", none -> none.
+#let fmt-date(s, long: false) = {
   if s == none { return none }
   let parts = s.split("-")
-  if parts.len() >= 2 { t.months.at(int(parts.at(1)) - 1) + " " + parts.at(0) } else { parts.at(0) }
+  let names = if long { t.monthsLong } else { t.months }
+  if parts.len() >= 2 { names.at(int(parts.at(1)) - 1) + " " + parts.at(0) } else { parts.at(0) }
 }
 
 /// "Mar 2022 - Present". Items without a startDate have no range.
-#let date-range(item) = {
-  let start = fmt-date(get(item, "startDate"))
+#let date-range(item, long: false, sep: " - ") = {
+  let start = fmt-date(get(item, "startDate"), long: long)
   if start == none { return none }
-  let end = fmt-date(get(item, "endDate"))
-  start + " - " + if end == none { t.present } else { end }
+  let end = fmt-date(get(item, "endDate"), long: long)
+  start + sep + if end == none { t.present } else { end }
 }
 
 #let linked(label, url) = if url == none { label } else { link(url)[#label] }
@@ -35,12 +36,15 @@
   if kept.len() == 0 { none } else { kept.join(sep) }
 }
 
+/// ISO country code -> name in the current language; unknown codes are shown as they are.
+#let country-name(code) = if code == none { none } else { t.countries.at(code, default: code) }
+
 /// Contact details as an array of content: place, email, phone, website.
 #let contact-parts() = {
   let parts = ()
   let loc = get(basics, "location")
   if loc != none {
-    let place = join-some((get(loc, "city"), get(loc, "region"), get(loc, "countryCode")))
+    let place = join-some((get(loc, "city"), get(loc, "region"), country-name(get(loc, "countryCode"))))
     if place != none { parts.push(place) }
   }
   if get(basics, "email") != none { parts.push(link("mailto:" + basics.email)[#basics.email]) }
@@ -50,13 +54,40 @@
 }
 
 /// Social profiles as an array of content ("GitHub: user"), shown on their own line.
-#let profile-parts() = basics.at("profiles", default: ()).map(p => linked(
-  p.network + ": " + p.at("username", default: p.url),
-  get(p, "url"),
-))
-
-/// Sections made of short one-line items; templates keep each one on a single page.
-#let compact-sections = ("skills", "certificates", "languages", "interests")
+/// A profile without a url is shown as plain text.
+#let profile-parts() = basics.at("profiles", default: ()).map(p => {
+  let who = get(p, "username")
+  if who == none { who = get(p, "url") }
+  linked(if who == none { p.network } else { p.network + ": " + who }, get(p, "url"))
+})
 
 /// "Bachelor, Computer Science".
 #let degree(item) = join-some((get(item, "studyType"), get(item, "area")))
+
+/// Consecutive items with the same `name` (several roles at one employer) -> arrays of items.
+#let group-by-name(items) = {
+  let groups = ()
+  for item in items {
+    if groups.len() > 0 and groups.last().first().name == item.name {
+      groups.at(groups.len() - 1).push(item)
+    } else {
+      groups.push((item,))
+    }
+  }
+  groups
+}
+
+/// One range covering a group: earliest start to latest end, or to "present" if any role is open.
+#let span-range(items, long: false, sep: " - ") = {
+  let starts = items.map(i => get(i, "startDate")).filter(x => x != none)
+  if starts.len() == 0 { return none }
+  let open = items.any(i => get(i, "endDate") == none)
+  let start = fmt-date(starts.sorted().first(), long: long)
+  let end = if open { t.present } else {
+    fmt-date(items.map(i => i.endDate).sorted().last(), long: long)
+  }
+  start + sep + end
+}
+
+/// Sections made of short one-line items; templates keep each one on a single page.
+#let compact-sections = ("skills", "certificates", "languages", "interests")

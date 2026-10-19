@@ -79,7 +79,7 @@
 
 #let render-education(item) = entry({
   row([#strong-name(linked(item.institution, get(item, "url")))#if degree(item) != none [ · #degree(item)]], date-range(item))
-  if get(item, "score") != none { muted[#t.score: #item.score] }
+  if get(item, "score") != none { muted(item.score) }
   if has(get(item, "courses")) { parbreak(); muted[#t.courses: #item.courses.join(", ")] }
 })
 

@@ -94,7 +94,7 @@ program
 
 program
   .command("render")
-  .description("Compose a variant and render it to output/<person>_<variant>_<lang>_<template>.pdf")
+  .description("Compose a variant and render it to output/<person>/<person>_<variant>_<lang>_<template>.pdf")
   .argument("<variant>")
   .option(...personOption)
   .option("-l, --lang <lang>", `language: ${LANGS.join("|")} (default: variant's lang, else en)`)

@@ -31,7 +31,7 @@ async function exists(file: string): Promise<boolean> {
  *   <stage>/resume.json                 the resolved resume; templates read json("/resume.json")
  *   <stage>/templates/<name>/main.typ   the whole templates folder, copied as-is, so templates
  *                                       can import /templates/_shared/...
- * System fonts are ignored: templates get Typst's bundled fonts plus their own
+ * System fonts are ignored: templates get Typst's bundled fonts, `_shared/fonts/` and their own
  * `<template>/fonts/`, which makes the PDF identical on every machine.
  */
 export class TypstRenderer implements Renderer {
@@ -55,8 +55,9 @@ export class TypstRenderer implements Renderer {
 
       const staged = path.join(stage, "templates", template);
       const args = ["compile", "--root", stage, "--ignore-system-fonts"];
-      if (await exists(path.join(staged, "fonts"))) {
-        args.push("--font-path", path.join(staged, "fonts"));
+      // Shared fonts first, then any extra fonts the template ships itself.
+      for (const fonts of [path.join(stage, "templates", "_shared", "fonts"), path.join(staged, "fonts")]) {
+        if (await exists(fonts)) args.push("--font-path", fonts);
       }
       args.push(path.join(staged, "main.typ"), out);
       await run(this.binary, args, { windowsHide: true });

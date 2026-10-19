@@ -134,8 +134,10 @@ export async function render(deps: Deps, input: RenderInput): Promise<RenderOutp
   const { resume, warnings, variant, lang } = await composeVariant(deps, input);
   const template = input.template ?? variant.template ?? DEFAULT_TEMPLATE;
   assertIdentifier("template name", template);
+  // One folder per person: easy to share or delete, and ignorable per person in Git.
   const outPath = path.join(
     deps.outputDir,
+    input.person,
     outputFileName(input.person, variant.name, lang, template),
   );
   await deps.renderer.render(resume, { template, outPath });

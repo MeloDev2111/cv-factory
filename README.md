@@ -6,7 +6,7 @@ it.
 - **One source of truth** per person, in [JSON Resume](https://jsonresume.org/schema) format.
 - **Variants**: different CVs for different kinds of roles, generated from the same data.
 - **Languages**: English (base) and Spanish, translated item by item.
-- **Templates**: swappable visual styles (`classic`, `modern`).
+- **Templates**: swappable visual styles (`classic`, `modern`, `clean`).
 - **Multiple people** in one repository.
 
 > **Status:** the end-to-end flow works (validate → compose → render to PDF).
@@ -24,8 +24,9 @@ it.
 | Template | How the PDF looks (`templates/typst/<name>/`) |
 
 A PDF is the combination of person, variant, language and template, and is
-written to `output/<person>_<variant>_<lang>_<template>.pdf`, for example
-`output/showcase_backend_es_classic.pdf`. Every dimension is in the name, so
+written to `output/<person>/<person>_<variant>_<lang>_<template>.pdf`, for example
+`output/showcase/showcase_backend_es_classic.pdf` (one folder per person, all
+git-ignored). Every dimension is in the name, so
 different combinations never overwrite each other (re-rendering the *same*
 combination does replace its file).
 
@@ -65,6 +66,18 @@ npm install
 npm test          # optional sanity check
 ```
 
+## Sample output
+The PDFs generated from the fictional `showcase` person are versioned in
+[`output/showcase/`](output/showcase/), so you can see what the tool produces
+without installing anything: every variant in English and Spanish, plus the same
+CV (`full` variant) in each template (`..._classic.pdf`, `..._modern.pdf`,
+`..._clean.pdf`). After changing a template, the data of `showcase` or the render
+logic, regenerate them with:
+```
+npm run samples
+```
+Every other person's PDFs (`output/<person>/`) are git-ignored.
+
 ## Usage
 `cv-factory <command>` below means `npm run dev -- <command>` (or
 `npm run build` once, then `node dist/cli/index.js <command>`).
@@ -73,8 +86,8 @@ cv-factory list-people
 cv-factory list-variants --person showcase
 cv-factory validate --person showcase
 cv-factory compose backend --person showcase --lang es   # prints the resolved resume.json
-cv-factory render backend --person showcase --lang es    # writes output/showcase_backend_es_classic.pdf
-cv-factory render backend --person showcase --template modern   # writes output/showcase_backend_en_modern.pdf
+cv-factory render backend --person showcase --lang es    # writes output/showcase/showcase_backend_es_classic.pdf
+cv-factory render backend --person showcase --template modern   # writes output/showcase/showcase_backend_en_modern.pdf
 ```
 `--person` can be omitted only when there is exactly one person. Missing
 translations are reported as warnings on stderr and fall back to English. If
@@ -88,12 +101,18 @@ creating a variant, translating, versioning) are in
 |---|---|
 | `classic` (default) | Serif, black on white, centered header. |
 | `modern` | Sans-serif (bundled Source Sans 3), one accent color, left-aligned header. |
+| `clean` | Sans-serif, black ink, centered `Name \| Role` header with contact in three columns, full month names, hyphen bullets. Groups several consecutive roles at the same employer under one heading. |
 
-Both are single-column, plain text in reading order, with no icons, images or
+All are single-column, plain text in reading order, with no icons, images or
 tables, so ATS parsers can extract them cleanly. Pick one per run with
-`--template`, or per variant with `template:` in the variant file. Both render
+`--template`, or per variant with `template:` in the variant file. All render
 `work`, `volunteer`, `projects`, `education`, `skills`, `certificates`, `awards`,
 `publications`, `languages` and `interests`.
+
+**Several roles at one employer.** Write one `work` entry per role, with the same
+`name` and consecutive in the file. `clean` shows the employer once with the
+overall date range and lists the roles under it; `classic` and `modern` repeat
+the employer on each role.
 
 ## Common scenarios
 
@@ -165,5 +184,6 @@ Slugs use lowercase letters, digits and hyphens only.
 - [docs/workflow.md](docs/workflow.md)
 
 ## Licenses
-The `modern` template bundles Source Sans 3 (Adobe), licensed under the SIL Open
-Font License 1.1; the license is in `templates/typst/modern/fonts/`.
+The `modern` and `clean` templates use Source Sans 3 (Adobe), bundled in
+`templates/typst/_shared/fonts/` and licensed under the SIL Open Font License 1.1;
+the license is in that folder.

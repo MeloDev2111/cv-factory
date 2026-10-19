@@ -16,7 +16,7 @@ const TRANSLATABLE: Readonly<Record<string, readonly string[]>> = {
   work: ["position", "description", "summary", "highlights"],
   volunteer: ["position", "summary", "highlights"],
   projects: ["description", "highlights", "roles", "entity"],
-  education: ["area", "studyType", "courses"],
+  education: ["area", "studyType", "score", "courses"],
   awards: ["title", "summary"],
   publications: ["summary"],
   skills: ["level"],
@@ -45,10 +45,11 @@ function localize(
   section: string,
   label: string,
   warnings: string[],
+  overridden: readonly string[] = [],
 ): JsonObject {
   const translation = extOf(item).i18n?.[lang] ?? {};
   const missing = (TRANSLATABLE[section] ?? []).filter(
-    (field) => field in item && !(field in translation),
+    (field) => field in item && !(field in translation) && !overridden.includes(field),
   );
   if (missing.length > 0) {
     warnings.push(`${label}: no "${lang}" translation for ${missing.join(", ")}; using ${BASE_LANG}`);
@@ -98,12 +99,15 @@ export function compose(source: Source, variant: Variant, lang: Lang): ComposeRe
   const translate = lang !== BASE_LANG;
 
   let basics = isObject(input["basics"]) ? input["basics"] : {};
-  if (translate) basics = localize(basics, lang, "basics", "basics", warnings);
-  basics = {
-    ...strip(basics),
+  const basicsOverride = {
     ...variant.basics,
     ...(translate ? variant.i18n?.[lang]?.basics : undefined),
   };
+  // Fields the variant sets itself need no translation in the source.
+  if (translate) {
+    basics = localize(basics, lang, "basics", "basics", warnings, Object.keys(basicsOverride));
+  }
+  basics = { ...strip(basics), ...basicsOverride };
 
   const available = Object.keys(input).filter((key) => Array.isArray(input[key]));
   const order = variant.sections ?? available;

@@ -15,6 +15,7 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "samples": "node scripts/render-samples.mjs",
     "gen:types": "json2ts -i schema/resume.schema.json -o src/domain/generated/resume.ts && json2ts -i schema/variant.schema.json -o src/domain/generated/variant.ts"
   },
   "dependencies": {

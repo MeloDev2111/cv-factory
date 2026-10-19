@@ -9,8 +9,8 @@ language, with different visual styles (templates). It supports multiple people.
 PDF is the only supported output format. Do not add HTML or other formats.
 
 ## Status
-The end-to-end flow (validate, compose, render to PDF) works, with two templates
-(`classic`, `modern`) and two fictional people: `example` (minimal) and `showcase`
+The end-to-end flow (validate, compose, render to PDF) works, with three templates
+(`classic`, `modern`, `clean`) and two fictional people: `example` (minimal) and `showcase`
 (complete; exercises every section, variant option and both languages). See
 `docs/workflow.md` for usage. Run `npm test` and `npm run typecheck` before
 committing. `showcase` must stay valid and fully translated: a test enforces it.
@@ -69,21 +69,23 @@ people/
     variants/
   <slug>/             real people (git-ignored)
 templates/typst/
-  _shared/            lib.typ + i18n.json used by every template
+  _shared/            lib.typ, i18n.json and fonts/ (Source Sans 3) used by every template
   <template>/         main.typ (+ optional fonts/ with their license)
 schema/               vendored JSON Resume schema + variant schema
 src/                  see Architecture
 test/
 docs/
-output/               generated PDFs (git-ignored)
+output/<person>/      generated PDFs, one folder per person (git-ignored)
 ```
 
 ## Naming rules
 - Person slug, variant name and template name match `[a-z0-9-]+` (lowercase,
   digits, hyphens; no dots, underscores or spaces). Folder/file names equal these
   identifiers.
-- Output file: `output/<person>_<variant>_<lang>_<template>.pdf`, e.g.
-  `output/jane-doe_backend_es_classic.pdf`. `_` is the only separator, which is
+- Output file: `output/<person>/<person>_<variant>_<lang>_<template>.pdf`, e.g.
+  `output/jane-doe/jane-doe_backend_es_classic.pdf`. The person is in both the
+  folder and the file name, so a PDF stays identifiable once it is moved or
+  attached. `_` is the only separator, which is
   why it is forbidden inside identifiers. Every dimension of the combination is
   in the name; never drop one, or renders overwrite each other.
 
@@ -104,7 +106,7 @@ is exactly one, and errors listing the options otherwise.
 - `cv-factory compose <variant> [--lang en|es]` — merge source + variant +
   language into a resolved `resume.json`.
 - `cv-factory render <variant> [--lang en|es] [--template <name>]` — compose,
-  then render to `output/<person>_<variant>_<lang>_<template>.pdf`.
+  then render to `output/<person>/<person>_<variant>_<lang>_<template>.pdf`.
 - `cv-factory list-variants` — list the person's variants.
 - `cv-factory list-people` — list available people.
 
@@ -139,7 +141,9 @@ scope the filter with `filter.sections` when they would conflict.
 
 ## Personal data
 `people/*` is git-ignored except the fictional `people/example/` and
-`people/showcase/`. Never commit real personal
+`people/showcase/`; likewise `output/*` except `output/showcase/`, whose sample
+PDFs are versioned (regenerate with `npm run samples` after changing a template
+or the showcase data). Never commit real personal
 data or generated PDFs. A real person's folder may be its own private Git
 repository, which is where their data is versioned and tagged. To publish a
 public-safe person, un-ignore that folder explicitly in `.gitignore`.

@@ -69,7 +69,7 @@
 
 #let render-education(item) = entry({
   row([*#linked(item.institution, get(item, "url"))*#if degree(item) != none [, #degree(item)]], date-range(item))
-  if get(item, "score") != none [#t.score: #item.score \ ]
+  if get(item, "score") != none [#item.score \ ]
   if has(get(item, "courses")) [#t.courses: #item.courses.join(", ")]
 })
 

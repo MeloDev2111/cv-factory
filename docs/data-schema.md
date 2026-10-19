@@ -18,7 +18,20 @@ standard schema tolerates, so the file stays valid JSON Resume.
 | `certificates[]` | `name`, `date`, `issuer`, `url` |
 
 Dates use ISO 8601 (`YYYY`, `YYYY-MM` or `YYYY-MM-DD`); omit `endDate` for
-current positions. Sections not listed are not rendered by the default template.
+current positions. Sections not listed are not rendered by the bundled templates.
+
+Notes on how the bundled templates read these fields:
+- `basics.location.countryCode` is an ISO 3166-1 alpha-2 code; the template shows
+  the country name in the output language (for the codes in
+  `templates/typst/_shared/i18n.json`) and the bare code otherwise.
+- A `basics.profiles[]` entry may omit `url`; it is then shown as plain text
+  (`LinkedIn: Name`) without a link.
+- Several roles at one employer are separate `work[]` entries with the same
+  `name`, consecutive in the file. The `clean` template groups them.
+- `education[].score` is free text shown as written, with no label added: write
+  "GPA 3.8/4.0" or "First place" (and its translation in `i18n`).
+- `awards[]` has a single `date`. For an award held over a period, omit `date` and
+  write the period in `summary` ("January – December 2024").
 
 ## Extensions: `x-cv-factory`
 
@@ -51,7 +64,7 @@ current positions. Sections not listed are not rendered by the default template.
   | `work` | `position`, `description`, `summary`, `highlights` |
   | `volunteer` | `position`, `summary`, `highlights` |
   | `projects` | `description`, `highlights`, `roles`, `entity` |
-  | `education` | `area`, `studyType`, `courses` |
+  | `education` | `area`, `studyType`, `score`, `courses` |
   | `awards` | `title`, `summary` |
   | `publications` | `summary` |
   | `skills` | `level` |
@@ -62,7 +75,9 @@ current positions. Sections not listed are not rendered by the default template.
   names, company, institution and publisher names, locations, URLs, dates, skill
   names and keywords) is never checked, but can still be translated by adding it
   to `i18n.<lang>`. If a checked field reads the same in both languages, repeat
-  it in `i18n.<lang>` to silence the warning.
+  it in `i18n.<lang>` to silence the warning. A `basics` field that the variant
+  overrides itself (`basics` or `i18n.<lang>.basics` in the variant) is not
+  checked either.
 - `tags` are lowercase identifiers (`[a-z0-9-]+`). The shape of `x-cv-factory` is
   validated by `schema/x-cv-factory.schema.json`; only `en` and `es` are valid
   `i18n` keys.
