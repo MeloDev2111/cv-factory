@@ -1,6 +1,7 @@
 # Workflow
 
-`cv-factory <command>` means `npm run dev -- <command>` (see the README). Replace
+`cvf <command>` means `npm run dev -- <command>`, or the linked `cvf` command (see
+the README, "Usage"; `cv-factory` is an alias). Replace
 `<slug>` with the person's folder name. Omit `--person` if there is only one
 person.
 
@@ -29,7 +30,7 @@ not committed. Slugs are lowercase letters, digits and hyphens.
    ```
 2. Tag it so variants can include it (`tags` list).
 3. For Spanish output, add `x-cv-factory.i18n.es` with the fields to translate.
-4. Check: `cv-factory validate --person <slug>`.
+4. Check: `cvf validate --person <slug>`.
 
 ## 3. Create a variant for a kind of role
 1. Create `people/<slug>/variants/<name>.yaml` (name: lowercase letters, digits,
@@ -47,12 +48,12 @@ not committed. Slugs are lowercase letters, digits and hyphens.
 2. Do not copy resume content into it; use `filter`, `require`, `sort` and
    `limits`. To show only your 6 featured or 6 most recent certifications, see
    the README scenario "Keep every certification in the source, show only some".
-3. Check: `cv-factory list-variants --person <slug>` and
-   `cv-factory compose backend --person <slug>` to inspect the resolved JSON.
+3. Check: `cvf list-variants --person <slug>` and
+   `cvf compose backend --person <slug>` to inspect the resolved JSON.
 
 ## 4. Render
 ```
-cv-factory render backend --person <slug> --lang es
+cvf render backend --person <slug> --lang es
 ```
 Output: `output/<slug>/<slug>_backend_es_<template>_<YYYY-MM-DD>.pdf` (for example
 `output/<slug>/<slug>_backend_es_classic_2026-10-19.pdf`). Each person has their
@@ -69,8 +70,8 @@ in English.
 
 **A shareable copy.** To publish or send a CV without personal data:
 ```
-cv-factory render backend --person <slug> --public
-cv-factory render backend --person <slug> --hide phone,email
+cvf render backend --person <slug> --public
+cvf render backend --person <slug> --hide phone,email
 ```
 `--public` hides phone, email, address and photo; `--hide` picks fields (see the
 README, "Shareable version"). The file is named `..._redacted_<date>.pdf`. Check the
@@ -80,8 +81,8 @@ can detect those.
 **Everything at once.** To generate every variant in every language with every
 template (for example before comparing templates or sending a batch):
 ```
-cv-factory render-all --person <slug>
-cv-factory render-all --person <slug> --variants backend --langs es --templates clean
+cvf render-all --person <slug>
+cvf render-all --person <slug> --variants backend --langs es --templates clean
 ```
 It validates first, keeps going if one combination fails and prints a summary
 (`12 PDF(s) written, 0 failed.`). Old dated files stay in `output/<slug>/` until

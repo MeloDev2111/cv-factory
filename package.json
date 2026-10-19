@@ -2,9 +2,11 @@
   "name": "cv-factory",
   "version": "0.1.0",
   "description": "Manage CVs as structured data and render tailored ATS-friendly PDFs.",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "bin": {
+    "cvf": "dist/cli/index.js",
     "cv-factory": "dist/cli/index.js"
   },
   "engines": {

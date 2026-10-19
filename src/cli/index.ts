@@ -63,7 +63,7 @@ function parseHide(opts: { hide?: string; public?: boolean }): Hideable[] {
 }
 
 const program = new Command()
-  .name("cv-factory")
+  .name("cvf")
   .description("Manage CVs as structured data and render tailored PDFs.")
   .showHelpAfterError();
 

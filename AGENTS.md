@@ -78,6 +78,21 @@ docs/
 output/<person>/      generated PDFs, one folder per person (git-ignored)
 ```
 
+## README previews
+`docs/img/preview-<template>.png` are page-1 images of the `showcase` CV (classic ·
+backend, modern · frontend, clean · full, all `--lang en`) shown in the README
+gallery. They are documentation assets, not a product feature: there is no PNG
+export in the tool and none must be added. They are made by hand with the Typst CLI
+on the same staged input the renderer uses, and go stale like the sample PDFs, so
+regenerate them after changing a template or the showcase data:
+```
+# stage: templates copied to <stage>/templates, resolved resume at <stage>/resume.json
+cvf compose backend --person showcase --lang en -o <stage>/resume.json
+typst compile --root <stage> --ignore-system-fonts \
+  --font-path <stage>/templates/_shared/fonts --format png --ppi 110 --pages 1 \
+  <stage>/templates/classic/main.typ docs/img/preview-classic.png
+```
+
 ## Naming rules
 - Person slug, variant name and template name match `[a-z0-9-]+` (lowercase,
   digits, hyphens; no dots, underscores or spaces). Folder/file names equal these
@@ -109,12 +124,14 @@ output/<person>/      generated PDFs, one folder per person (git-ignored)
   `templates/typst/_shared/i18n.json`.
 
 ## Commands
+The binary is `cvf` (alias `cv-factory`, both declared in `package.json` `bin`).
+Keep the CLI name short in docs and examples; the data key stays `x-cv-factory`.
 All commands accept `--person <slug>`; it defaults to the only person when there
 is exactly one, and errors listing the options otherwise.
-- `cv-factory validate` — validate the person's `source.json` and variants.
-- `cv-factory compose <variant> [--lang en|es]` — merge source + variant +
+- `cvf validate` — validate the person's `source.json` and variants.
+- `cvf compose <variant> [--lang en|es]` — merge source + variant +
   language into a resolved `resume.json`.
-- `cv-factory render <variant> [--lang en|es] [--template <name>] [--no-date]` —
+- `cvf render <variant> [--lang en|es] [--template <name>] [--no-date]` —
   compose, then render to
   `output/<person>/<person>_<variant>_<lang>_<template>_<YYYY-MM-DD>.pdf`.
 - `compose`, `render` and `render-all` also accept `--public` (hides phone, email,
@@ -122,13 +139,13 @@ is exactly one, and errors listing the options otherwise.
   website, profiles, image). Redaction is the pure `domain/redact.ts`, applied after
   `compose` and before rendering, so hidden data never reaches a template or the PDF.
   Warns when no way to contact the person is left.
-- `cv-factory render-all [--variants a,b] [--langs en,es] [--templates x,y]
+- `cvf render-all [--variants a,b] [--langs en,es] [--templates x,y]
   [--no-date]` — render every variant x language x template (each filter defaults
   to "all"). Validates once up front, rejects unknown names, keeps going when one
   combination fails and exits 1 if any did. Templates are discovered via
   `Renderer.listTemplates()`.
-- `cv-factory list-variants` — list the person's variants.
-- `cv-factory list-people` — list available people.
+- `cvf list-variants` — list the person's variants.
+- `cvf list-people` — list available people.
 
 ## Variant format (YAML)
 ```yaml

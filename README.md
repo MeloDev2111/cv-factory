@@ -8,6 +8,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 ![Typst](https://img.shields.io/badge/PDF-Typst-239DAD)
 ![Output](https://img.shields.io/badge/output-PDF-red)
+![License](https://img.shields.io/badge/license-MIT-green)
 
 [Quick start](#-quick-start) ·
 [Gallery](#-gallery) ·
@@ -35,7 +36,26 @@ in the style you prefer, with or without your personal contact data.
 
 ## 📸 Gallery
 
-Real output from the fictional `showcase` person, versioned in [`output/showcase/`](output/showcase/):
+Real output from the fictional `showcase` person (click a preview to open its PDF):
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <a href="output/showcase/showcase_backend_en_classic.pdf"><img src="docs/img/preview-classic.png" alt="classic template preview"></a><br>
+      <b>classic</b> · backend
+    </td>
+    <td align="center" width="33%">
+      <a href="output/showcase/showcase_frontend_en_modern.pdf"><img src="docs/img/preview-modern.png" alt="modern template preview"></a><br>
+      <b>modern</b> · frontend
+    </td>
+    <td align="center" width="33%">
+      <a href="output/showcase/showcase_full_en_clean.pdf"><img src="docs/img/preview-clean.png" alt="clean template preview"></a><br>
+      <b>clean</b> · full
+    </td>
+  </tr>
+</table>
+
+All the generated PDFs are versioned in [`output/showcase/`](output/showcase/):
 
 | Template · variant | English | Español |
 |---|---|---|
@@ -115,7 +135,11 @@ output/showcase/showcase_backend_es_classic_2026-10-19.pdf
 
 ## 📖 Usage
 
-`cv-factory <command>` below means `npm run dev -- <command>` (or run `npm run build` once, then `node dist/cli/index.js <command>`).
+The command is **`cvf`** (`cv-factory` works as an alias). Without installing anything, use `npm run dev -- <command>` in the project folder; to get a real `cvf` command in your terminal, build and link it once:
+```bash
+npm run build && npm link      # then `cvf <command>` works from any folder
+```
+Examples below use `cvf`.
 
 | Command | What it does |
 |---|---|
@@ -137,9 +161,9 @@ output/showcase/showcase_backend_es_classic_2026-10-19.pdf
 | `--variants`, `--langs`, `--templates <list>` | render-all | Comma-separated subsets (each defaults to all). |
 
 ```bash
-cv-factory render backend --person showcase --template modern --no-date
-cv-factory render-all --person showcase --langs es
-cv-factory compose backend --person showcase --lang es     # inspect what a template receives
+cvf render backend --person showcase --template modern --no-date
+cvf render-all --person showcase --langs es
+cvf compose backend --person showcase --lang es     # inspect what a template receives
 ```
 
 Missing translations are printed as warnings on stderr and fall back to English.
@@ -153,10 +177,10 @@ Step-by-step guides (adding a job, creating a variant, translating, versioning) 
 
 `render-all` renders every **variant × language × template** of a person:
 ```bash
-cv-factory render-all --person your-name
+cvf render-all --person your-name
 # 2 variants × 2 languages × 3 templates = 12 PDFs in output/your-name/
-cv-factory render-all --person showcase --variants backend,full --langs es --templates clean,modern
-cv-factory render-all --person showcase --no-date          # stable file names
+cvf render-all --person showcase --variants backend,full --langs es --templates clean,modern
+cvf render-all --person showcase --no-date          # stable file names
 ```
 - Data is validated once, up front; invalid data stops the run before anything is rendered.
 - An unknown variant, language or template is rejected with the list of valid ones.
@@ -171,9 +195,9 @@ cv-factory render-all --person showcase --no-date          # stable file names
 
 Generate a copy without personal data to post publicly or send around, leaving the full CV untouched:
 ```bash
-cv-factory render backend --person your-name --public          # preset
-cv-factory render backend --person your-name --hide phone      # just the phone
-cv-factory render-all --person your-name --public --hide location
+cvf render backend --person your-name --public          # preset
+cvf render backend --person your-name --hide phone      # just the phone
+cvf render-all --person your-name --public --hide location
 ```
 - **`--public`** hides `phone`, `email`, `address` and `image`. City, website and profiles stay, so there is still a way to reach you.
 - **`--hide <list>`** hides specific data: `phone`, `email`, `address` (street and postal code; city and country stay), `location` (all of it), `website`, `profiles`, `image`. It adds to `--public` if you use both.
@@ -284,8 +308,8 @@ Real people live in `people/<slug>/` and are **git-ignored**, so personal data i
 
 ```bash
 cp -r people/example people/your-name     # or start from showcase to see every option
-cv-factory validate --person your-name
-cv-factory render-all --person your-name
+cvf validate --person your-name
+cvf render-all --person your-name
 ```
 Slugs use lowercase letters, digits and hyphens only. To keep your own data under version control, make `people/<slug>/` its own **private** Git repository (see [docs/workflow.md](docs/workflow.md#5-version-with-git)).
 
@@ -321,6 +345,8 @@ docs/                        architecture, data schema, workflow
 
 ## 📄 Licenses
 
+The code is released under the [MIT License](LICENSE).
+
 The `modern` and `clean` templates use **Source Sans 3** (Adobe), bundled in
 `templates/typst/_shared/fonts/` under the SIL Open Font License 1.1; the license
-is in that folder.
+is in that folder. It applies to the font files only.
