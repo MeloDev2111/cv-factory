@@ -1,0 +1,16 @@
+# Dependencies and build artifacts
+node_modules/
+dist/
+output/
+
+# Personal data: only the placeholder person is versioned.
+# To publish another person's (public-safe) data, un-ignore that folder
+# explicitly, e.g. `!people/jane-doe/`.
+people/*
+!people/example/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
