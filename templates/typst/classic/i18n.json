@@ -1,0 +1,26 @@
+{
+  "en": {
+    "present": "Present",
+    "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "sections": {
+      "work": "Experience",
+      "projects": "Projects",
+      "skills": "Skills",
+      "education": "Education",
+      "certificates": "Certifications",
+      "languages": "Languages"
+    }
+  },
+  "es": {
+    "present": "Actualidad",
+    "months": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+    "sections": {
+      "work": "Experiencia",
+      "projects": "Proyectos",
+      "skills": "Habilidades",
+      "education": "Educación",
+      "certificates": "Certificaciones",
+      "languages": "Idiomas"
+    }
+  }
+}

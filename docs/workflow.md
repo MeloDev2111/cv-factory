@@ -1,6 +1,6 @@
 # Workflow
 
-Commands describe the intended behavior; the CLI is not implemented yet. Replace
+`cv-factory <command>` means `npm run dev -- <command>` (see the README). Replace
 `<slug>` with the person's folder name. Omit `--person` if there is only one
 person.
 
@@ -38,6 +38,8 @@ not committed. Slugs are lowercase letters, digits and hyphens.
    name: backend
    description: Backend roles
    basics: { label: Backend Engineer }
+   i18n:
+     es: { basics: { label: Ingeniero Backend } }
    sections: [work, projects, skills, education, certificates]
    filter: { tags: [backend] }
    limits: { work: 4, projects: 3 }

@@ -51,16 +51,25 @@ interface Renderer {
   render(resume: ResolvedResume, opts: { template: string; outPath: string }): Promise<void>;
 }
 ```
-`typst-renderer` writes the resolved JSON to a temporary location, runs
-`typst compile` with `--root` and `--input` pointing at it, and surfaces Typst's
-errors. Typst only reads files under `--root`, so the JSON is staged inside it.
-A missing `typst` binary is detected up front with install instructions.
+Typst only reads files under `--root`, so `typst-renderer` stages everything in
+a temporary directory and compiles from there:
+```
+<stage>/resume.json         the resolved resume; templates read json("/resume.json")
+<stage>/template/main.typ   the template folder, copied as-is
+```
+It runs `typst compile --root <stage> <stage>/template/main.typ <out.pdf>`,
+surfaces Typst's stderr on failure and always removes the stage directory. A
+missing `typst` binary is detected up front with install instructions; the
+binary can be overridden with the `CV_FACTORY_TYPST` environment variable.
 
 ## Templates
 A template is a folder `templates/typst/<name>/` containing `main.typ` and an
-`i18n.json` with the labels per language (section titles, date format). It
-consumes only the resolved `resume.json`. Adding a template requires no code
-change.
+`i18n.json` with the labels per language (section titles, month names, "present").
+It consumes only the resolved `resume.json` and takes the language from
+`meta["x-cv-factory"].lang`. Adding a template requires no code change. The
+`classic` template renders `work`, `projects`, `skills`, `education`,
+`certificates` and `languages`, in the order they appear in the resolved resume;
+other sections are ignored. It uses Typst's bundled Libertinus Serif font.
 
 ## Languages
 `compose` is language-aware; renderers are not. Content translation is resolved

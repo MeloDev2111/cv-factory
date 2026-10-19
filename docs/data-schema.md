@@ -41,9 +41,24 @@ current positions. Sections not listed are not rendered by the default template.
 - Top-level fields are the base language (English); `i18n.es` overrides them.
 - Arrays (e.g. `highlights`) are replaced as a whole, not merged element by element.
 - A missing translation falls back to the base text and produces a warning that
-  lists the untranslated fields. It does not fail the build.
-- Do not add `i18n` to fields that need none: certification names, company and
-  institution names, URLs, dates, skill keywords.
+  lists the untranslated fields. It does not fail the build. Warnings only cover
+  items that end up in the output (after variant filtering and limits).
+- Only these fields are checked for missing translations:
+
+  | Section | Checked fields |
+  |---|---|
+  | `basics` | `label`, `summary` |
+  | `work`, `volunteer` | `position`, `summary`, `highlights` |
+  | `projects` | `description`, `highlights` |
+  | `education` | `area`, `studyType` |
+  | `awards` | `title`, `summary` |
+
+  Everything else (certification names, company and institution names, URLs,
+  dates, skills) needs no translation and never warns. If a checked field reads
+  the same in both languages, repeat it in `i18n.<lang>` to silence the warning.
+- `tags` are lowercase identifiers (`[a-z0-9-]+`). The shape of `x-cv-factory` is
+  validated by `schema/x-cv-factory.schema.json`; only `en` and `es` are valid
+  `i18n` keys.
 
 ### On `basics`
 `basics` accepts the same `x-cv-factory.i18n` (e.g. translated `label` and
@@ -55,11 +70,15 @@ name: backend          # [a-z0-9-]+, equals the file name
 description: string    # optional
 lang: en               # optional default language: en | es
 template: classic      # optional default template
-basics: { ... }        # optional shallow override of basics
-sections: [work, ...]  # optional; presence and order of sections
+basics: { ... }        # optional shallow override of basics (all languages)
+i18n:                  # optional; per-language basics override, wins over `basics`
+  es: { basics: { label: "..." } }
+sections: [work, ...]  # optional; presence and order of sections (default: all, source order)
 filter: { tags: [...] }# optional; keep items with ANY listed tag (plus untagged)
-limits: { work: 4 }    # optional; max items per section
+limits: { work: 4 }    # optional; max items per section, applied after filtering
 ```
+Order of operations in `compose`: variant `sections` selection, tag filter,
+limits, language overlay (which produces the warnings), then `basics` overrides.
 Variants never contain resume content beyond the `basics` override; they only
 reference and filter the source.
 

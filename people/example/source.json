@@ -1,0 +1,102 @@
+{
+  "basics": {
+    "name": "Jane Doe",
+    "label": "Software Engineer",
+    "email": "jane.doe@example.com",
+    "phone": "+1 555 0100",
+    "url": "https://example.com/jane",
+    "summary": "Software engineer with experience building web services and developer tooling. This is placeholder data.",
+    "location": { "city": "Springfield", "countryCode": "US" },
+    "profiles": [
+      { "network": "GitHub", "username": "janedoe", "url": "https://github.com/janedoe" }
+    ],
+    "x-cv-factory": {
+      "i18n": {
+        "es": {
+          "label": "Ingeniera de Software",
+          "summary": "Ingeniera de software con experiencia en servicios web y herramientas para desarrolladores. Datos de ejemplo."
+        }
+      }
+    }
+  },
+  "work": [
+    {
+      "name": "Acme Corp",
+      "position": "Backend Engineer",
+      "startDate": "2022-03",
+      "summary": "Built and operated payment APIs.",
+      "highlights": [
+        "Reduced API latency by 40% by introducing caching.",
+        "Led the migration of a monolith to services."
+      ],
+      "x-cv-factory": {
+        "tags": ["backend", "node"],
+        "i18n": {
+          "es": {
+            "position": "Ingeniera Backend",
+            "summary": "Construí y operé APIs de pagos.",
+            "highlights": [
+              "Reduje la latencia de la API un 40% al introducir caché.",
+              "Lideré la migración de un monolito a servicios."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "Globex",
+      "position": "Frontend Developer",
+      "startDate": "2019-06",
+      "endDate": "2022-02",
+      "summary": "Developed customer-facing dashboards.",
+      "highlights": ["Built a design system used by five product teams."],
+      "x-cv-factory": {
+        "tags": ["frontend"],
+        "i18n": {
+          "es": {
+            "position": "Desarrolladora Frontend",
+            "summary": "Desarrollé paneles para clientes.",
+            "highlights": ["Construí un sistema de diseño usado por cinco equipos de producto."]
+          }
+        }
+      }
+    }
+  ],
+  "education": [
+    {
+      "institution": "Springfield University",
+      "area": "Computer Science",
+      "studyType": "Bachelor",
+      "startDate": "2015",
+      "endDate": "2019",
+      "x-cv-factory": {
+        "i18n": { "es": { "area": "Ciencias de la Computación", "studyType": "Licenciatura" } }
+      }
+    }
+  ],
+  "skills": [
+    { "name": "Backend", "keywords": ["Node.js", "TypeScript", "PostgreSQL"], "x-cv-factory": { "tags": ["backend"] } },
+    { "name": "Frontend", "keywords": ["React", "CSS"], "x-cv-factory": { "tags": ["frontend"] } },
+    { "name": "Tools", "keywords": ["Git", "Docker"] }
+  ],
+  "projects": [
+    {
+      "name": "cv-factory",
+      "description": "CLI that renders CVs from structured data.",
+      "highlights": ["Single source of truth with tailored variants."],
+      "url": "https://example.com/cv-factory",
+      "x-cv-factory": {
+        "tags": ["backend", "node"],
+        "i18n": {
+          "es": {
+            "description": "CLI que genera CVs a partir de datos estructurados.",
+            "highlights": ["Una única fuente de verdad con variantes a medida."]
+          }
+        }
+      }
+    }
+  ],
+  "certificates": [
+    { "name": "Certified Kubernetes Administrator", "issuer": "CNCF", "date": "2023-05" }
+  ]
+}

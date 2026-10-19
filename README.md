@@ -9,8 +9,8 @@ it.
 - **Templates**: swappable visual styles.
 - **Multiple people** in one repository.
 
-> **Status:** Phase 0 — design and documentation. The CLI is not implemented
-> yet; commands below describe the intended usage.
+> **Status:** Phase 1 — the end-to-end flow works (validate → compose → render
+> to PDF) with the `example` person and the `classic` template.
 
 ## Concepts
 
@@ -55,20 +55,26 @@ Should print a version (developed against 0.15.1). Update later with
 `winget upgrade Typst.Typst` (or `typst update` if you installed from a release
 archive).
 
-## Setup (planned)
+## Setup
 ```
 npm install
-npm run build
+npm test          # optional sanity check
 ```
 
-## Usage (planned)
+## Usage
+`cv-factory <command>` below means `npm run dev -- <command>` (or
+`npm run build` once, then `node dist/cli/index.js <command>`).
 ```
 cv-factory list-people
 cv-factory list-variants --person example
 cv-factory validate --person example
-cv-factory render default --person example --lang en
+cv-factory compose backend --lang es          # prints the resolved resume.json
+cv-factory render backend --lang es           # writes output/example_backend_es.pdf
 ```
-Output: `output/example_default_en.pdf`. Step-by-step guides (adding a job,
+`--person` can be omitted when there is only one person. Missing translations
+are reported as warnings on stderr and fall back to English. If `typst` is not on
+your `PATH` (for example in a terminal opened before installing it), set
+`CV_FACTORY_TYPST` to the executable. Step-by-step guides (adding a job,
 creating a variant, translating, versioning) are in
 [docs/workflow.md](docs/workflow.md).
 

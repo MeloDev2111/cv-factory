@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cv-factory.local/schema/x-cv-factory.schema.json",
+  "title": "XCvFactory",
+  "description": "Shape of the x-cv-factory extension on basics and on items of array sections.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z0-9-]+$" }
+    },
+    "i18n": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "en": { "type": "object" },
+        "es": { "type": "object" }
+      }
+    }
+  }
+}

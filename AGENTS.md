@@ -9,8 +9,9 @@ language, with different visual styles (templates). It supports multiple people.
 PDF is the only supported output format. Do not add HTML or other formats.
 
 ## Status
-Phase 0 (design and documentation). The CLI is not implemented yet; the sections
-below describe the intended behavior. See `docs/workflow.md` for usage.
+Phase 1: the end-to-end flow (validate, compose, render to PDF) works for the
+`example` person with the `classic` template. See `docs/workflow.md` for usage.
+Run `npm test` and `npm run typecheck` before committing.
 
 ## Glossary
 | Concept | Meaning | Lives in |
@@ -90,7 +91,7 @@ output/               generated PDFs (git-ignored)
 - Template labels (section titles, date format) come from the template's own
   `i18n.json`.
 
-## Commands (expected CLI behavior)
+## Commands
 All commands accept `--person <slug>`; it defaults to the only person when there
 is exactly one, and errors listing the options otherwise.
 - `cv-factory validate` — validate the person's `source.json` and variants.
@@ -108,6 +109,7 @@ description: Backend roles
 lang: en                 # optional default language
 template: classic        # optional default template
 basics: { label: Backend Engineer }   # shallow override of basics
+i18n: { es: { basics: { label: Ingeniero Backend } } }   # per-language basics override
 sections: [work, projects, skills, education, certificates]  # presence and order
 filter: { tags: [backend] }           # items tagged with ANY of these are kept
 limits: { work: 4, projects: 3 }      # max items per section

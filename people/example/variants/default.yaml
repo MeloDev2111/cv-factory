@@ -1,0 +1,3 @@
+name: default
+description: Everything, in the default section order
+sections: [work, projects, skills, education, certificates]

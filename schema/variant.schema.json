@@ -1,0 +1,147 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cv-factory.local/schema/variant.schema.json",
+  "title": "Variant",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name"
+  ],
+  "definitions": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "section": {
+      "type": "string",
+      "enum": [
+        "work",
+        "volunteer",
+        "education",
+        "awards",
+        "certificates",
+        "publications",
+        "skills",
+        "languages",
+        "interests",
+        "references",
+        "projects"
+      ]
+    },
+    "lang": {
+      "type": "string",
+      "enum": [
+        "en",
+        "es"
+      ]
+    },
+    "langOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "basics": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "properties": {
+    "name": {
+      "$ref": "#/definitions/identifier"
+    },
+    "description": {
+      "type": "string"
+    },
+    "lang": {
+      "$ref": "#/definitions/lang"
+    },
+    "template": {
+      "$ref": "#/definitions/identifier"
+    },
+    "basics": {
+      "type": "object"
+    },
+    "i18n": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "$ref": "#/definitions/langOverride"
+        },
+        "es": {
+          "$ref": "#/definitions/langOverride"
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/section"
+      }
+    },
+    "filter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/identifier"
+          }
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "work": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "volunteer": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "education": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "awards": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "certificates": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "publications": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "skills": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "languages": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "interests": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "references": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "projects": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

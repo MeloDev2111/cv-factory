@@ -1,0 +1,14 @@
+name: backend
+description: Backend roles
+basics:
+  label: Backend Engineer
+i18n:
+  es:
+    basics:
+      label: Ingeniera Backend
+sections: [work, projects, skills, education, certificates]
+filter:
+  tags: [backend]
+limits:
+  work: 4
+  projects: 3
