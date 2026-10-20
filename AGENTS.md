@@ -8,6 +8,13 @@ language, with different visual styles (templates). It supports multiple people.
 
 PDF is the only supported output format. Do not add HTML or other formats.
 
+## Which task are you on?
+- **Building or improving someone's CV** (from scratch, from an existing PDF, or
+  polishing the wording): follow the playbooks in `docs/agent/`, starting at
+  `docs/agent/README.md`. They assume you edit data in `people/<slug>/` and drive the
+  CLI; they do not need you to change code.
+- **Changing the tool** (code, schemas, templates, docs): the rest of this file applies.
+
 ## Status
 The end-to-end flow (validate, compose, render to PDF) works, with three templates
 (`classic`, `modern`, `clean`) and two fictional people: `example` (minimal) and `showcase`
@@ -75,7 +82,8 @@ templates/typst/
 schema/               vendored JSON Resume schema + variant schema
 src/                  see Architecture
 test/
-docs/
+docs/                 architecture, data schema, workflow
+  agent/              playbooks for an AI assistant building a CV (not code docs)
 ```
 
 ## README previews

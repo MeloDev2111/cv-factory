@@ -102,7 +102,17 @@ npm run dev -- render backend --person showcase --no-date
 ```
 Only the variant and the person are needed: language (`en`), template (`classic`) and everything else take their defaults. `--no-date` gives a stable file name; without it the name ends in today's date. Spanish, other templates, hidden data and more are options you add when you need them: see [Usage](#-usage).
 
-Then make it yours: [create your own person](#-privacy-and-your-own-data).
+Then make it yours: [create your own person](#-privacy-and-your-own-data), or let an AI assistant [build it from your existing CV](#-use-it-with-an-ai-assistant).
+
+## 🤖 Use it with an AI assistant
+
+The repository includes step-by-step playbooks for an AI model (any model that can read files and run commands), in [docs/agent/](docs/agent/README.md):
+
+- **You already have a CV (PDF):** give it to your assistant and point it at [`from-pdf.md`](docs/agent/from-pdf.md). It builds your `source.json` and variants, validates, renders and iterates with you.
+- **You are starting from nothing:** [`from-scratch.md`](docs/agent/from-scratch.md) runs a question-and-answer interview until there is a solid base that renders.
+- **You want it polished:** [`review.md`](docs/agent/review.md) is a checklist for wording, skills, translations and privacy.
+
+A prompt as simple as *"Read docs/agent/README.md and build my CV from this PDF"* is enough. Your data stays in `people/<you>/`, which is git-ignored.
 
 ## 🧠 How it works
 
@@ -342,6 +352,7 @@ schema/                      JSON Resume + variant + extension schemas
 src/                         domain · ports · adapters · app · cli
 test/                        Vitest
 docs/                        architecture, data schema, workflow
+docs/agent/                  playbooks for an AI assistant (from a PDF, from scratch, review)
 ```
 
 ## 📚 Documentation
@@ -352,6 +363,7 @@ docs/                        architecture, data schema, workflow
 | [docs/architecture.md](docs/architecture.md) | Layers, renderer contract, templates |
 | [docs/data-schema.md](docs/data-schema.md) | Fields used, `x-cv-factory` extensions, variant format |
 | [docs/workflow.md](docs/workflow.md) | Step-by-step guides |
+| [docs/agent/](docs/agent/README.md) | Playbooks for an AI assistant: build a CV from a PDF or from scratch, and review it |
 
 ## 📄 Licenses
 
