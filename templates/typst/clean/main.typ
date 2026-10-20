@@ -66,7 +66,8 @@
     bullets(get(first, "highlights"))
   } else {
     row([*#linked(first.name, get(first, "url"))*], span-range(group, long: true, sep: " – "))
-    if shared { descriptions.first() }
+    let header = join-some((if shared { descriptions.first() } else { none }, location), sep: " · ")
+    if header != none { header }
     for role in group {
       pad(left: 1em, {
         v(0.5em)

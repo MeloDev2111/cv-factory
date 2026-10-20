@@ -11,7 +11,7 @@ standard schema tolerates, so the file stays valid JSON Resume.
 | Section | Fields used |
 |---|---|
 | `basics` | `name`, `label`, `email`, `phone`, `url`, `summary`, `location` (`city`, `countryCode`, `region`), `profiles[]` (`network`, `username`, `url`) |
-| `work[]` | `name`, `position`, `url`, `startDate`, `endDate`, `summary`, `highlights[]` |
+| `work[]` | `name`, `position`, `location`, `url`, `startDate`, `endDate`, `summary`, `highlights[]` |
 | `education[]` | `institution`, `url`, `area`, `studyType`, `startDate`, `endDate`, `score` |
 | `skills[]` | `name`, `level`, `keywords[]` |
 | `projects[]` | `name`, `description`, `highlights[]`, `url`, `startDate`, `endDate`, `keywords[]` |
