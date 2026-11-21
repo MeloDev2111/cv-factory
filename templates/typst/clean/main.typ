@@ -54,31 +54,39 @@
 
 // --- sections ---------------------------------------------------------------
 /// One employer. A single role reads "Company / Role"; several roles are listed under the employer.
-#let render-work-group(group) = entry({
+/// A single role stays on one page. With several roles the page may break between roles (never
+/// inside one), so a long employer does not leave half a page blank; its heading stays with the
+/// first role.
+#let render-work-group(group) = {
   let first = group.first()
   let descriptions = group.map(i => get(i, "description")).dedup()
   let shared = descriptions.len() == 1 and descriptions.first() != none
   let location = get(first, "location")
   if group.len() == 1 {
-    row([*#linked(first.name, get(first, "url"))*], dates(first))
-    [#get(first, "position")]
-    if shared or location != none { parbreak(); join-some((get(first, "description"), location), sep: " · ") }
-    bullets(get(first, "highlights"))
+    entry({
+      row([*#linked(first.name, get(first, "url"))*], dates(first))
+      [#get(first, "position")]
+      if shared or location != none { parbreak(); join-some((get(first, "description"), location), sep: " · ") }
+      bullets(get(first, "highlights"))
+    })
   } else {
-    row([*#linked(first.name, get(first, "url"))*], span-range(group, long: true, sep: " – "))
-    let header = join-some((if shared { descriptions.first() } else { none }, location), sep: " · ")
-    if header != none { header }
-    for role in group {
-      pad(left: 1em, {
-        v(0.5em)
+    // Blocks go straight into the page flow: spacing set on a wrapping block was lost.
+    block(sticky: true, below: 0pt, {
+      row([*#linked(first.name, get(first, "url"))*], span-range(group, long: true, sep: " – "))
+      let header = join-some((if shared { descriptions.first() } else { none }, location), sep: " · ")
+      if header != none { header }
+    })
+    for (n, role) in group.enumerate() {
+      let last = n == group.len() - 1
+      block(breakable: false, above: 1.1em, below: if last { 1em } else { 0pt }, pad(left: 1em, {
         row([*#get(role, "position")*], dates(role))
         if not shared and get(role, "description") != none { role.description }
         if get(role, "summary") != none { parbreak(); role.summary }
         bullets(get(role, "highlights"))
-      })
+      }))
     }
   }
-})
+}
 
 #let render-volunteer(item) = entry({
   row([*#get(item, "position")*, #linked(item.organization, get(item, "url"))], dates(item))
